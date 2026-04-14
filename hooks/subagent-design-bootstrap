@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# SubagentStart — inject DESIGN.md compact token digest to subagents
+set -euo pipefail
+
+# Derive plugin root
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+CACHE_DIR="${PLUGIN_ROOT}/hooks/.cache"
+DIGEST_FILE="$CACHE_DIR/token-digest.txt"
+
+# No cached digest = no DESIGN.md detected at session start
+[ -f "$DIGEST_FILE" ] || exit 0
+
+DIGEST=$(cat "$DIGEST_FILE")
+printf '{"hookSpecificOutput":{"hookEventName":"SubagentStart","additionalContext":"── design-tokens ──\\n%s\\n── /design-tokens ──"}}' "$DIGEST"

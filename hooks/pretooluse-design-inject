@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# PreToolUse (Write|Edit) — inject compact DESIGN.md token digest on component/page files
+set -euo pipefail
+command -v jq >/dev/null 2>&1 || exit 0
+
+# Derive plugin root
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+CACHE_DIR="${PLUGIN_ROOT}/hooks/.cache"
+DIGEST_FILE="$CACHE_DIR/token-digest.txt"
+
+# No cached digest = no DESIGN.md detected at session start
+[ -f "$DIGEST_FILE" ] || exit 0
+
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+[ -z "$FILE_PATH" ] && exit 0
+
+# Match component and page file paths
+INJECT=false
+case "$FILE_PATH" in
+  */src/components/*|*/components/*)
+    INJECT=true ;;
+  */src/app/*|*/app/*)
+    INJECT=true ;;
+  */pages/*)
+    INJECT=true ;;
+esac
+
+[ "$INJECT" = false ] && exit 0
+
+# Skip prototype files — they're being generated, not enforced
+case "$FILE_PATH" in
+  */app/design/prototype-*|*/app/design/CHOSEN.md)
+    exit 0 ;;
+esac
+
+# Deduplication per session (injected-paths.txt cleared by session-start)
+DEDUP_FILE="$CACHE_DIR/injected-paths.txt"
+touch "$DEDUP_FILE"
+
+# Normalize to pattern (directory level, not individual file)
+DIR_PATTERN=$(dirname "$FILE_PATH" | sed 's|.*/src/|src/|; s|.*/app/|app/|; s|.*/components/|components/|; s|.*/pages/|pages/|')
+
+if grep -qxF "$DIR_PATTERN" "$DEDUP_FILE" 2>/dev/null; then
+  exit 0
+fi
+
+# Record this pattern as injected
+echo "$DIR_PATTERN" >> "$DEDUP_FILE"
+
+DIGEST=$(cat "$DIGEST_FILE")
+printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"── design-tokens ──\\n%s\\n── /design-tokens ──"}}' "$DIGEST"
