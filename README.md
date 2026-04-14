@@ -21,11 +21,7 @@ That's it. All 14 skills, 3 hooks, and the code-reviewer agent are immediately a
 
 For the brainstorming skill's prototype-first pipeline (Stitch mood boards → v0 prototypes → DESIGN.md extraction):
 
-**v0 wrapper:**
-```bash
-cd <plugin-root>/scripts && npm install
-```
-Set `V0_API_KEY` in your shell profile (`~/.zshrc` or `~/.bashrc`). Requires a [v0 Team plan](https://v0.dev).
+**v0 API key:** Set `V0_API_KEY` in your shell profile (`~/.zshrc` or `~/.bashrc`). Requires a [v0 Team plan](https://v0.dev). The v0-sdk dependency is vendored — no `npm install` needed.
 
 **MCP integrations (optional, enhance brainstorming):**
 ```bash
