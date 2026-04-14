@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+# SessionStart — UPP skill discovery + design state detection
+# Combined hook: injects using-upp skill content + DESIGN.md token digest
+set -euo pipefail
+
+# Derive plugin root from script location
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+# Clear per-session dedup cache (PreToolUse uses this)
+CACHE_DIR="${PLUGIN_ROOT}/hooks/.cache"
+mkdir -p "$CACHE_DIR"
+rm -f "$CACHE_DIR/injected-paths.txt"
+
+# --- JSON escaping ---
+escape_for_json() {
+    local s="$1"
+    s="${s//\\/\\\\}"
+    s="${s//\"/\\\"}"
+    s="${s//$'\n'/\\n}"
+    s="${s//$'\r'/\\r}"
+    s="${s//$'\t'/\\t}"
+    printf '%s' "$s"
+}
+
+# --- 1. Read using-upp skill content ---
+USING_UPP_FILE="${PLUGIN_ROOT}/skills/using-upp/SKILL.md"
+if [ -f "$USING_UPP_FILE" ]; then
+    using_upp_content=$(cat "$USING_UPP_FILE")
+else
+    using_upp_content="ERROR: Could not read using-upp/SKILL.md from ${USING_UPP_FILE}"
+fi
+
+# --- 2. Detect design state ---
+PROJECT_ROOT="$PWD"
+DESIGN_MD="$PROJECT_ROOT/DESIGN.md"
+design_state=""
+
+if [ -f "$DESIGN_MD" ]; then
+    # DESIGN.md exists — extract version and token digest
+    VERSION=$(grep -oE 'v[0-9]+' "$DESIGN_MD" 2>/dev/null | head -1 || true)
+    VERSION=${VERSION:-"v?"}
+
+    # Section 2: Colors
+    COLORS=$(sed -n '/^## 2\./,/^## 3\./p' "$DESIGN_MD" 2>/dev/null | grep -oE '#[0-9a-fA-F]{3,8}' 2>/dev/null | head -6 | tr '\n' ' ' || true)
+
+    # Section 3: Typography — font family
+    FONT=$(sed -n '/^## 3\./,/^## 4\./p' "$DESIGN_MD" 2>/dev/null | grep -iE 'font|family|primary' 2>/dev/null | head -1 | sed 's/^[[:space:]-]*//' | cut -c1-60 || true)
+
+    # Section 4: Components — border-radius
+    RADIUS=$(sed -n '/^## 4\./,/^## 5\./p' "$DESIGN_MD" 2>/dev/null | grep -oiE 'rounded-[a-z0-9]+|border-radius[: ]*[0-9]+px' 2>/dev/null | head -3 | tr '\n' ' ' || true)
+
+    # Section 6: Shadows
+    SHADOW=$(sed -n '/^## 6\./,/^## 7\./p' "$DESIGN_MD" 2>/dev/null | grep -oiE 'shadow-[a-z0-9]+' 2>/dev/null | head -3 | tr '\n' ' ' || true)
+
+    # Section 10: Registry types (if present)
+    REGISTRY=$(sed -n '/^## 10\./,/^## 11\./p' "$DESIGN_MD" 2>/dev/null | grep -oE '^\| [a-zA-Z_]+' 2>/dev/null | sed 's/^| //' | tr '\n' ', ' | sed 's/, $//' || true)
+
+    # Build compact digest
+    DIGEST="DESIGN.md (${VERSION}). Key tokens:"
+    [ -n "$COLORS" ] && DIGEST="$DIGEST Colors: $COLORS."
+    [ -n "$FONT" ] && DIGEST="$DIGEST Font: $FONT."
+    [ -n "$RADIUS" ] && DIGEST="$DIGEST Radius: $RADIUS."
+    [ -n "$SHADOW" ] && DIGEST="$DIGEST Shadow: $SHADOW."
+    [ -n "$REGISTRY" ] && DIGEST="$DIGEST Registry: $REGISTRY."
+    DIGEST="$DIGEST Read DESIGN.md Sections 2,3,4,10 before any frontend work."
+
+    # Cache for PreToolUse and SubagentStart hooks
+    echo "$DIGEST" > "$CACHE_DIR/token-digest.txt"
+    echo "$PROJECT_ROOT" > "$CACHE_DIR/project-root.txt"
+
+    design_state="Design state: $DIGEST"
+else
+    # No DESIGN.md — check if there's frontend code
+    HAS_FRONTEND=false
+    if [ -f "$PROJECT_ROOT/package.json" ]; then
+        grep -qlE '"react"|"next"|"vue"|"svelte"|"angular"' "$PROJECT_ROOT/package.json" 2>/dev/null && HAS_FRONTEND=true
+    fi
+    if [ -f "$PROJECT_ROOT/tailwind.config.ts" ] || [ -f "$PROJECT_ROOT/tailwind.config.js" ] || [ -f "$PROJECT_ROOT/tailwind.config.mjs" ]; then
+        HAS_FRONTEND=true
+    fi
+
+    if [ "$HAS_FRONTEND" = true ]; then
+        design_state="Design state: No DESIGN.md found. This project has frontend code but no design system spec. If starting fresh, consider running brainstorming with prototype-first to establish DESIGN.md."
+    fi
+    # If no frontend, design_state stays empty — no design message
+fi
+
+# --- 3. Build combined context ---
+using_upp_escaped=$(escape_for_json "$using_upp_content")
+session_context="<EXTREMELY_IMPORTANT>\nYou have UPP (Ultimate Product Powers).\n\n**Below is the full content of your 'upp:using-upp' skill - your introduction to using skills. For all other skills, use the 'Skill' tool:**\n\n${using_upp_escaped}\n</EXTREMELY_IMPORTANT>"
+
+# Append design state if present
+if [ -n "$design_state" ]; then
+    design_state_escaped=$(escape_for_json "$design_state")
+    session_context="${session_context}\n\n${design_state_escaped}"
+fi
+
+# --- 4. Output JSON (Claude Code format only) ---
+printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$session_context"
+
+exit 0
