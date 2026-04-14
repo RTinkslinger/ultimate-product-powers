@@ -1,0 +1,18 @@
+{
+  "name": "upp",
+  "description": "Ultimate Product Powers — design-aware product development skills for Claude Code. Prototype-first brainstorming, design-system enforcement, implementation planning, and multi-agent execution with three-gate review.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Aakash Kumar"
+  },
+  "license": "MIT",
+  "keywords": [
+    "design-systems",
+    "product-development",
+    "brainstorming",
+    "implementation-plans",
+    "design-enforcement",
+    "agentic-ux",
+    "tdd"
+  ]
+}
