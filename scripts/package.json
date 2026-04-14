@@ -1,0 +1,8 @@
+{
+  "name": "claude-code-scripts",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "v0-sdk": "^0.16.4"
+  }
+}
