@@ -77,6 +77,13 @@ When you need to determine which skill to use, consult this table:
 | Have a plan, need to execute it | executing-plans | After writing-plans creates plan |
 | Writing frontend components | design-system-enforcer | Auto via hooks, invoke for deep grounding |
 | Building agentic UI patterns | agentic-ux-patterns | During brainstorming (agentic) or implementation |
+| Implementing any feature or bugfix | test-driven-development | Before writing implementation code |
+| Encountering a bug, test failure, unexpected behavior | systematic-debugging | Before proposing fixes |
+| About to claim work is complete or fixed | verification-before-completion | Before committing or creating PRs |
+| Completing a task, want quality check | requesting-code-review | After implementation, before merge |
+| Received code review feedback | receiving-code-review | Before implementing review suggestions |
+| 2+ independent tasks with no shared state | dispatching-parallel-agents | When tasks can run in parallel |
+| Creating or editing a skill | writing-skills | Before writing or deploying skill changes |
 
 **Design awareness:** If the project has frontend code, check for DESIGN.md. If absent and building greenfield, brainstorming will establish it via prototype-first.
 
