@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1.0] — 2026-04-16
+
+### Changed
+- **using-upp** — Rebuilt from ground up. Added product development pipeline state machine (graphviz), enforcement-oriented routing table with "MUST invoke" and "Why — what goes wrong if you skip" columns, signal-based self-check protocol for mid-session skill awareness, action-oriented "Do This Instead" column on red flags table. Positional optimization: signals + self-check in recency zone for maximum LLM attention retention. 130 → 230 lines.
+
 ## [1.0.0] — 2026-04-15
 
 Initial release of Ultimate Product Powers.
