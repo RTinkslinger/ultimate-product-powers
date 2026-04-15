@@ -452,7 +452,8 @@ All prompt templates live alongside this skill file:
 
 **Subagent skills:**
 - **design-system-enforcer** — Design-aware subagents invoke this for full DESIGN.md grounding before writing code
-- Subagents follow TDD by default (write test → verify fail → implement → verify pass → commit)
+- **test-reviewer** — Dispatch after writing test suite (>3 test cases in a single file) and before implementing. Fresh-context agent reviews tests for trivial passability, behavior vs implementation assertions, missing edge cases, and mock quality. Include test files + task description in the dispatch
+- Subagents follow TDD by default (write test → verify fail → **test-reviewer gate** → implement → verify pass → **refactor** → verify stays green → commit)
 
 **Design enforcement stack:**
 - **Layer 2 hooks** (SessionStart, PreToolUse, SubagentStart) handle runtime token injection

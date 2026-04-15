@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.0] — 2026-04-16
+
+### Changed
+- **test-driven-development** — Enhanced with agent-aware TDD patterns. Added "Test Behaviors, Not Implementations" as first principle with 4-row boundary examples table. Added test-reviewer agent gate in RED phase (mandatory for >3 test cases). Expanded REFACTOR from 3 lines to full subsection. Added spec-to-test connection for UPP pipeline. Updated exceptions ("scaffolding output" not "generated code"), When Stuck (agent-first guidance), verification checklist (test-reviewer line). 372 → 433 lines.
+- **executing-plans** — Updated Integration section to reference test-reviewer agent in subagent TDD flow. Added REFACTOR step to flow description. Aligned skip threshold with TDD skill (>3 test cases in a single file).
+
+### Added
+- **test-reviewer agent** — New agent definition (agents/test-reviewer.md, 120 lines). Fresh-context test quality reviewer dispatched as gate in TDD RED phase. Checks: trivial passability, behavior vs implementation assertions, missing edge cases, mock quality, spec alignment. Explicit context isolation — rejects implementation hints from dispatch payload.
+
 ## [1.1.0] — 2026-04-16
 
 ### Changed

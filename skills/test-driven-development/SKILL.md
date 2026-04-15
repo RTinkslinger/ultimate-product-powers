@@ -11,6 +11,8 @@ Write the test first. Watch it fail. Write minimal code to pass.
 
 **Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing.
 
+TDD is a design technique, not just a testing technique. Writing the test first forces you to design the interface from the consumer's perspective — before you think about internals. Hard-to-test code is a design signal, not a testing problem.
+
 **Violating the letter of the rules is violating the spirit of the rules.**
 
 ## When to Use
@@ -23,10 +25,29 @@ Write the test first. Watch it fail. Write minimal code to pass.
 
 **Exceptions (ask your human partner):**
 - Throwaway prototypes
-- Generated code
+- Scaffolding output (create-next-app, npx init — not AI-written code)
 - Configuration files
 
 Thinking "skip TDD just this once"? Stop. That's rationalization.
+
+## Test Behaviors, Not Implementations
+
+This is the #1 thing that separates useful TDD from wasted TDD. Tests coupled to implementation details break every time you refactor — and then you stop refactoring, and then you stop doing TDD, and then quality collapses.
+
+**Test what the code DOES, not how it does it.**
+
+| Testing behavior (DO) | Testing implementation (DON'T) |
+|----------------------|-------------------------------|
+| "returns user when email is valid" | "calls database.query with SELECT * FROM users" |
+| "retries 3 times on failure" | "calls setTimeout between retries" |
+| "renders error message on invalid input" | "sets state.error to true" |
+| "sends notification when order completes" | "calls notificationService.send with specific args" |
+
+**The boundary test:** If you refactored the internals without changing the behavior, would your test break? If yes — you're testing implementation. Rewrite it.
+
+**For frontend components:** Test what the user sees and does, not the component's internal state. Assert on rendered output, accessible roles, visible text — not on state variables, hook calls, or DOM structure.
+
+**When DESIGN.md exists:** Component tests should assert against design tokens (semantic color names, font size variables) — not hardcoded hex values. The design system is a behavioral contract.
 
 ## The Iron Law
 
@@ -51,13 +72,17 @@ digraph tdd_cycle {
     rankdir=LR;
     red [label="RED\nWrite failing test", shape=box, style=filled, fillcolor="#ffcccc"];
     verify_red [label="Verify fails\ncorrectly", shape=diamond];
+    review [label="TEST REVIEW\nDispatch agent", shape=box, style=filled, fillcolor="#ffffcc"];
     green [label="GREEN\nMinimal code", shape=box, style=filled, fillcolor="#ccffcc"];
     verify_green [label="Verify passes\nAll green", shape=diamond];
     refactor [label="REFACTOR\nClean up", shape=box, style=filled, fillcolor="#ccccff"];
     next [label="Next", shape=ellipse];
 
     red -> verify_red;
-    verify_red -> green [label="yes"];
+    verify_red -> green [label="≤3 tests"];
+    verify_red -> review [label="task suite"];
+    review -> green [label="pass"];
+    review -> red [label="weak tests\nrewrite"];
     verify_red -> red [label="wrong\nfailure"];
     green -> verify_green;
     verify_green -> refactor [label="yes"];
@@ -71,6 +96,10 @@ digraph tdd_cycle {
 ### RED - Write Failing Test
 
 Write one minimal test showing what should happen.
+
+#### Spec Connection (when available)
+
+If brainstorming produced a spec, read it before writing tests. Each spec requirement becomes at least one test case. The spec tells you WHAT to test. TDD tells you HOW.
 
 <Good>
 ```typescript
@@ -127,6 +156,27 @@ Confirm:
 
 **Test errors?** Fix error, re-run until it fails correctly.
 
+### Test-Reviewer Gate (after RED, before GREEN)
+
+After writing your failing tests for a task, dispatch the test-reviewer agent to review them before implementing.
+
+**Why a separate agent, not self-review:** You wrote the test. You already have an implementation in mind. You CANNOT objectively evaluate whether your test is weak — the same thinking that produced the test evaluates it. A fresh-context agent has no implementation bias. It sees only the test.
+
+**Dispatch:** Use the Agent tool with subagent_type "test-reviewer". Include:
+- The test file(s)
+- The spec or task description (what the tests should cover)
+- Any relevant type definitions or interfaces
+
+**The agent checks:**
+- Could a trivially wrong implementation pass these tests?
+- Are tests asserting on behaviors or implementation details?
+- What edge cases are missing?
+- Are mocks testing real behavior or mock behavior?
+
+**If the agent flags issues:** Fix the tests before proceeding to GREEN. Do NOT implement against weak tests — you'll build false confidence.
+
+**When to skip:** Only for ≤3 test cases in a single file. Everything else goes through the gate. This is not a judgment call.
+
 ### GREEN - Minimal Code
 
 Write simplest code to pass the test.
@@ -182,14 +232,24 @@ Confirm:
 
 **Other tests fail?** Fix now.
 
-### REFACTOR - Clean Up
+### REFACTOR - Clean Up (Don't Skip This)
 
-After green only:
-- Remove duplication
-- Improve names
-- Extract helpers
+This is where TDD pays off. You have green tests. Now improve the code WITH CONFIDENCE — the tests catch any break.
 
-Keep tests green. Don't add behavior.
+Skipping this step is the most common way TDD degrades into "messy code with tests."
+
+**Do:**
+- Remove duplication (same pattern for multiple tests? extract it)
+- Improve names (now that you understand what the code does)
+- Extract helpers (function grew during GREEN? break it apart)
+- Simplify conditionals (if-else chains → early returns, guard clauses)
+
+**Don't:**
+- Add new behavior (that's a new RED cycle)
+- "Improve" code that isn't related to what you just built
+- Refactor tests and production code at the same time (one, then the other)
+
+**Keep tests green throughout.** Run after every refactor step. If a test breaks, your refactor changed behavior — undo and try again.
 
 ### Repeat
 
@@ -335,7 +395,9 @@ Before marking work complete:
 - [ ] All tests pass
 - [ ] Output pristine (no errors, warnings)
 - [ ] Tests use real code (mocks only if unavoidable)
+- [ ] Tests assert behaviors, not implementation details
 - [ ] Edge cases and errors covered
+- [ ] Test-reviewer agent dispatched and passed (for task-level test suites)
 
 Can't check all boxes? You skipped TDD. Start over.
 
@@ -343,7 +405,7 @@ Can't check all boxes? You skipped TDD. Start over.
 
 | Problem | Solution |
 |---------|----------|
-| Don't know how to test | Write wished-for API. Write assertion first. Ask your human partner. |
+| Don't know how to test | Write wished-for API. Write assertion first. Dispatch test-reviewer agent for guidance. Ask your human partner if available. |
 | Test too complicated | Design too complicated. Simplify interface. |
 | Must mock everything | Code too coupled. Use dependency injection. |
 | Test setup huge | Extract helpers. Still complex? Simplify design. |
