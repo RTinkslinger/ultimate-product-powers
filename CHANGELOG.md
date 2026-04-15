@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.3.0] — 2026-04-16
+
+### Changed
+- **systematic-debugging** — Enhanced with AI-aware debugging patterns and escalation ladder. Phase 1 restructured from sequential numbered steps to parallel investigation checklist. Added AI-generated code failure patterns (hallucinated APIs, happy-path handlers, silent failures, missing edge cases, training data mismatch). Added error misdirection check ("don't trust where the error says it is"). New 3-rung escalation ladder: fix 1 → new hypothesis, fix 2 → hypothesis-generator subagent (fresh context, constrained input), fix 3 → question architecture. New Impact Analysis subsection (upstream/downstream/boundary/observability checks before committing fix). 296 → 301 lines.
+
 ## [1.2.0] — 2026-04-16
 
 ### Changed
