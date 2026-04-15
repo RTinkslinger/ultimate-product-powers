@@ -200,10 +200,17 @@ README.md
 
 ## Requirements
 
-- **Claude Code** (Claude Code only — no Cursor/Copilot/Gemini support)
-- **bash** (for hooks)
-- **jq** (for PreToolUse hook — exits silently if missing)
-- **Node.js + npm** (only for v0 prototype generation in brainstorming)
+| Requirement | What it's for | Critical? | If missing |
+|-------------|--------------|-----------|------------|
+| **Claude Code** | The plugin platform | **Yes** | Plugin won't load. No Cursor/Copilot/Gemini support. |
+| **bash** | All 3 hook scripts (SessionStart, PreToolUse, SubagentStart) | **Yes** | Hooks won't fire — no skill discovery injection, no design token enforcement. Skills still work manually but lose automatic enforcement. macOS/Linux have it. Windows needs Git Bash or WSL. |
+| **jq** | PreToolUse hook parses `tool_input.file_path` from stdin JSON | Recommended | Hook exits silently — design tokens won't inject on component file writes. SessionStart and SubagentStart hooks still work. Install: `brew install jq` (macOS) / `apt install jq` (Linux). |
+| **Node.js** | v0 prototype generation during brainstorming | Optional | Brainstorming works fully without it — you skip prototype generation and describe designs verbally instead. Only needed if you want the Stitch → v0 → DESIGN.md extraction pipeline. |
+| **V0_API_KEY** | Authenticates with v0 Platform API | Optional | Same as above — only for prototype generation. Set in `~/.zshrc` or `~/.bashrc`. Requires [v0 Team plan](https://v0.dev). |
+| **Figma MCP** | Design extraction, drift detection, Figma enrichment | Optional | Brainstorming skips Figma enrichment step. Design-system-enforcer skips drift detection. Everything else works. |
+| **Stitch MCP** | Mood exploration, custom design system generation | Optional | Brainstorming uses verbal mood description instead of generated mood boards. Falls back gracefully. |
+
+**Minimum to get started:** Claude Code + bash. Everything else enhances but nothing blocks.
 
 ---
 
