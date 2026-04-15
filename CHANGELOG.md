@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.0] — 2026-04-16
+
+### Changed
+- **dispatching-parallel-agents** — Added file ownership declaration in agent task creation (prevents conflicts instead of detecting them), shared spec reference for coordination, sequential merge strategy in review/integrate step, AI-specific spot checks. 183 → 185 lines.
+- **finishing-a-development-branch** — Expanded Step 1 from "verify tests" to full pre-completion verification: tests + lint/type checks + AI completeness scan (stale imports, dead code, leftover debug statements, config artifacts) + design compliance gate (when DESIGN.md exists). Added "premature done claim" to common mistakes. Updated red flags for expanded verification. 201 → 235 lines.
+
+### Added
+- **finishing-a-development-branch** — New skill in UPP (previously superpowers-only). Enhanced with AI-aware pre-completion verification.
+
 ## [1.3.0] — 2026-04-16
 
 ### Changed

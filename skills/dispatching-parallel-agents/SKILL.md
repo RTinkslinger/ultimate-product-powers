@@ -60,7 +60,9 @@ Each domain is independent - fixing tool approval doesn't affect abort tests.
 Each agent gets:
 - **Specific scope:** One test file or subsystem
 - **Clear goal:** Make these tests pass
-- **Constraints:** Don't change other code
+- **File ownership:** Explicit list of files this agent MAY edit. No other files. This prevents conflicts — if agents can't edit the same files, they can't produce merge conflicts
+- **Shared spec reference:** If a plan or spec exists, include the relevant section so all agents work from the same source of truth
+- **Constraints:** Don't change files outside your ownership list
 - **Expected output:** Summary of what you found and fixed
 
 ### 3. Dispatch in Parallel
@@ -77,9 +79,10 @@ Task("Fix tool-approval-race-conditions.test.ts failures")
 
 When agents return:
 - Read each summary
-- Verify fixes don't conflict
-- Run full test suite
-- Integrate all changes
+- Verify fixes don't conflict (check `git diff` for overlapping file edits)
+- **Merge sequentially** — merge one agent's branch, then rebase remaining branches onto updated main before merging the next. This catches conflicts one at a time instead of all at once
+- Run full test suite after ALL merges
+- Spot check — agents can make systematic errors (hallucinated APIs, happy-path-only handlers)
 
 ## Agent Prompt Structure
 
