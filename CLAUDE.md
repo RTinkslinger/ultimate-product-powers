@@ -34,6 +34,27 @@ Development happens in the dev workspace at `~/Claude Projects/Skills Factory/Ul
 When a skill is modified in the dev workspace:
 1. Copy the updated file(s) to the matching path here
 2. Verify zero superpowers references: `grep -ri "superpowers" skills/`
-3. Bump version in `.claude-plugin/plugin.json` if releasing
-4. Commit + push
-5. Users run `/plugin update upp@ultimate-product-powers` to get the update
+3. Commit + push
+4. Users run `/plugin update upp@ultimate-product-powers` to get the update
+
+## Versioning
+
+Current version: **1.0.0**
+
+Three files carry the version — all three must be bumped together on release:
+- `.claude-plugin/plugin.json` → `version` field
+- `.claude-plugin/marketplace.json` → `metadata.version` AND `plugins[0].version`
+
+**When to bump:**
+- **Patch (1.0.x):** Bug fixes, wording tweaks, supporting file updates
+- **Minor (1.x.0):** New skills added, existing skills enhanced, hook behavior changes
+- **Major (x.0.0):** Breaking changes to skill interfaces, hook output format changes, skill removals
+
+**Release process:**
+1. Update all three version fields
+2. Update CHANGELOG.md with what changed
+3. Commit with message: `release: vX.Y.Z`
+4. Tag: `git tag vX.Y.Z && git push --tags`
+5. Push: `git push`
+
+Users pick up updates via `/plugin update upp@ultimate-product-powers`.
