@@ -17,6 +17,13 @@ What makes UPP different: design is a first-class concern throughout the pipelin
 
 That's it. All 14 skills, 3 hooks, and the code-reviewer agent are immediately available.
 
+### Updating
+
+```bash
+/plugin update upp@ultimate-product-powers
+/reload-plugins
+```
+
 ### Optional: Prototype Generation Setup
 
 For the brainstorming skill's prototype-first pipeline (Stitch mood boards → v0 prototypes → DESIGN.md extraction):
