@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1] — 2026-04-16
+
+### Fixed
+- **finishing-a-development-branch** — Step 1c grep was hardcoded to `src/`, now scans changed files only via `git diff main --name-only`. Stale import detection now references linter instead of grep (grep can't catch unused imports). TODO/FIXME scan now checks only lines added in this branch (not pre-existing TODOs). Dead code detection references `knip` or project-specific tools.
+- **finishing-a-development-branch** — Step 1d design compliance now references design-system-enforcer skill explicitly and includes a concrete grep command for hardcoded hex colors. Previously unexecutable.
+- **finishing-a-development-branch** — Added cross-references to verification-before-completion and design-system-enforcer in Integration section.
+- **dispatching-parallel-agents** — Agent prompt example updated to demonstrate file ownership declaration and shared spec reference (previously taught the concept but didn't show it).
+
 ## [1.4.0] — 2026-04-16
 
 ### Changed

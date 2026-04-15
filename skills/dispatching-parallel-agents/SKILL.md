@@ -94,6 +94,15 @@ Good agent prompts are:
 ```markdown
 Fix the 3 failing tests in src/agents/agent-tool-abort.test.ts:
 
+**File ownership:** You MAY edit:
+- src/agents/agent-tool-abort.test.ts
+- src/agents/agent-tool-abort.ts
+Do NOT edit any other files.
+
+**Spec reference:** Per plan Step 3, abort should capture partial output
+and track pending tool count accurately.
+
+**Failures:**
 1. "should abort tool with partial output capture" - expects 'interrupted at' in message
 2. "should handle mixed completed and aborted tools" - fast tool aborted instead of completed
 3. "should properly track pendingToolCount" - expects 3 results but gets 0

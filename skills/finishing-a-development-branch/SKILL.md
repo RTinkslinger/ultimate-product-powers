@@ -35,25 +35,31 @@ npx tsc --noEmit  # TypeScript type check
 **1c. AI completeness scan**
 
 AI agents consistently claim "done" while leaving artifacts behind. Before presenting options, scan for:
-- [ ] Stale imports — modules imported but no longer used after changes
-- [ ] Dead code — functions/variables that lost all callers during the work
-- [ ] Leftover TODO/FIXME/HACK comments from the implementation
+- [ ] Stale imports — run the project's lint command (e.g., `eslint --rule 'no-unused-vars: error'`, `ruff check --select F401`). Grep won't catch unused imports — use the linter
+- [ ] Dead code — check functions/variables that lost all callers. Use `npx knip` (JS/TS) or grep for the function name across the project. If zero callers outside its definition, it's dead
+- [ ] Leftover TODO/FIXME/HACK — scan for comments added DURING THIS BRANCH's work (not pre-existing ones). Check `git diff main -- '*.ts' '*.tsx' '*.js' '*.py'` for added lines containing TODO/FIXME/HACK. Pre-existing TODOs in the codebase are not your problem
 - [ ] Config pointing at old names — test configs, CI files, package.json scripts referencing renamed/deleted files
-- [ ] Console.log / debug statements that shouldn't ship
+- [ ] Debug statements that shouldn't ship:
 
 ```bash
-# Quick scan
-grep -rn "TODO\|FIXME\|HACK\|console\.log\|debugger" src/ --include="*.ts" --include="*.tsx" --include="*.js"
+# Scan for debug artifacts in changed files only (not entire codebase)
+git diff main --name-only | xargs grep -n "console\.log\|debugger\|print(" 2>/dev/null
 ```
 
 **1d. Design compliance (when DESIGN.md exists)**
 
-If project root has DESIGN.md, verify the branch's frontend changes use design tokens correctly:
-- Colors use CSS variables or Tailwind semantic classes from DESIGN.md Section 2 (no hardcoded hex)
-- Typography matches Section 3 hierarchy
-- Component patterns match Section 4
+If project root has DESIGN.md AND this branch changed frontend files:
 
-Skip this check if no DESIGN.md exists or no frontend files were changed.
+Invoke the **design-system-enforcer** skill for a compliance check, or at minimum:
+```bash
+# Scan changed frontend files for hardcoded hex colors (should use design tokens)
+git diff main --name-only -- '*.tsx' '*.jsx' '*.css' | xargs grep -n '#[0-9a-fA-F]\{3,8\}' 2>/dev/null
+```
+- Any hardcoded hex → should use CSS variables or Tailwind semantic classes from DESIGN.md Section 2
+- Check typography matches Section 3 hierarchy
+- Check component patterns match Section 4
+
+Skip entirely if no DESIGN.md exists or no frontend files were changed.
 
 **If ANY check fails:**
 ```
@@ -232,4 +238,6 @@ git worktree remove <worktree-path>
 - **executing-plans** - After all tasks/batches complete
 
 **Pairs with:**
+- **verification-before-completion** - Ensures evidence-based completion claims. This skill's Step 1 handles branch-level verification; verification-before-completion handles task-level claims during implementation
+- **design-system-enforcer** - For full design compliance audit (Step 1d invokes or references this)
 - **using-git-worktrees** - Cleans up worktree created by that skill
