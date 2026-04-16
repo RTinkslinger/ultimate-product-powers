@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.8.0] — 2026-04-17
+
+### Changed
+- **verification-before-completion** — Full pipeline rebuild (research → synthesis → brainstorming → spec → audits → writing-plans → SKILL.md → RED-GREEN-REFACTOR → audits → deploy). Supersedes v1.7.0 which shipped earlier with documented bugs and process violations. Plan: `docs/upp/plans/2026-04-17-verification-skill-v2.md`. Spec: `docs/upp/specs/2026-04-17-verification-design-v2.md`. 6 audit log files in `audit-logs/v1.8.0-*.md` document each pipeline step.
+
+  v1.7.0 supersession reasons (specific bugs fixed in v1.8.0):
+  - **Tier 2 `git stash` bug:** v1.7.0 used `git stash` as the sole revert primitive. On a committed fix, `git stash` is a no-op — the test never went red, the negative control silently passed without verifying anything. v1.8.0 enumerates 3 cases (uncommitted, committed-HEAD, merge-commit) with state-appropriate revert commands and uses surgical `git checkout HEAD -- <files>` instead of `git reset --hard` to avoid collateral damage to unrelated dirty work.
+  - **Description CSO violation:** v1.7.0 description summarized workflow ("Requires running verification commands and citing exit code"). writing-skills explicitly warned this pattern causes Claude to follow the description summary instead of reading the skill body. v1.8.0 description is pure trigger.
+  - **Skipped pipeline steps:** v1.7.0 author skipped brainstorming, the writing-skills RED-GREEN-REFACTOR subagent pressure tests, the research-synthesis Phase 7 external validator subagent, and adversarial audits between steps. v1.8.0 ran all of these as structural artifacts (audit log files in `audit-logs/`).
+  - **Content gaps:** v1.7.0 omitted `set -euo pipefail` mention, JUnit XML / SARIF as Rank 2 evidence, and read-back primitives by claim type. All present in v1.8.0.
+  - **Inflated CHANGELOG claims:** v1.7.0 said "~40 sources" (never counted) and "each excuse bound to a real consequence" (delivered 3/10 vignettes). v1.8.0 spec §7 mandates grep-verifiable counts with no qualitative superlatives.
+
+  v1.8.0 grep-verifiable counts (every count below independently checkable against the shipped SKILL.md):
+  - SKILL.md is 253 lines (under 300 cap)
+  - 5 AI failure modes (each with all 5 elements: Mechanism / Symptom / Detection signal / Mitigation / Documented incident)
+  - 10 rationalization table rows
+  - 4 inline incident vignettes in the rationalization table (Feb 2025 terraform destroy, TypeScript linter≠compiler example, Jul 2025 Replit DB delete, Nov 2025 Cloudflare outage)
+  - 12 Red Flag bullets (preserves "subagent delegation without verification" from v1.7.0; adds "Tier 2 negative-control bypass" and "silencing the error to make verification pass")
+  - 6 cache-bust ecosystem rows (Python, Node CommonJS, Node ESM, Jest, TypeScript, watch-mode runners)
+  - 3 Tier 2 cases (A uncommitted, B committed-HEAD, C merge-commit)
+  - 5 read-back primitive categories in Failure Mode 5 (file edit, commit/push, branch state, migration/schema, binary artifact)
+  - 4 UPP integrations (test-driven-development, finishing-a-development-branch, systematic-debugging, executing-plans), no inline fallbacks
+  - 0 mentions of "Builder-Validator chain" as named term (concept retained in plain language)
+  - 0 superpowers lineage references ("24 failure memories", "your human partner")
+
 ## [1.7.0] — 2026-04-16
 
 ### Changed
