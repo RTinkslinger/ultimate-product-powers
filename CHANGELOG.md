@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.6.0] — 2026-04-16
+
+### Changed
+- **finishing-a-development-branch** — Full pipeline rebuild (research synthesis → brainstorm → spec → writing-skills → adversarial audits). Research: `research/17-finishing-branch-research.md` (6 topics, ~30 sources with URLs). Seven research-backed additions to v1.4.1:
+  - **Step 1a** mandates FRESH TERMINAL test re-run with pasted exit code — addresses in-session hallucinated "all tests passed" claims.
+  - **Step 1e (new)** diff self-consistency check scans for suspicious infra/config file changes (`package.json`, `tsconfig.json`, `.github/workflows/`, etc.) — catches AI workarounds (e.g., bumping a package version to silence an error instead of fixing the bug).
+  - **Step 2.5 (new)** size advisory: fires when >400 LOC AND >3 commits. Cites Propel Code data (defect escape rate 4%→28% between 200 and 800 LOC). Advisory only, does not block.
+  - **Step 3** audience detection: if remote + CI detected, prepends note advising Option 2 (PR) over Option 1 (local merge) since local merge skips CI verification.
+  - **Step 4 Option 1** now asks merge strategy (squash vs merge-commit) with commit-count default and rebase-merge parenthetical. Sources: GitHub docs, kernel.org.
+  - **Step 4 Option 2** expanded PR body template: required Summary, Linked Issue, Test Plan (includes fresh-terminal checkbox), Rollback; optional AI provenance comment line.
+  - **Step 5** pre-removal worktree checklist: `git status` clean, commits pushed, branch state known. Surfaces `git worktree remove` refusal instead of force-removing silently.
+  - Expanded Common Mistakes, Red Flags, and new Rationalizations table. Kept v1.4.1's correct Step 1c (linter for imports, scoped grep for debug statements) and Step 1d (design-system-enforcer reference). 244 → 394 lines.
+
+### Added
+- **using-git-worktrees** — New UPP skill (previously only in disabled superpowers). Full pipeline build (research → synthesis → spec → writing-skills). Research: `research/18-git-worktrees-research.md` (5 topics: internals, bare-repo pattern, pitfalls, Claude Code native support, pool pattern; ~25 sources with URLs). Progressive-disclosure structure:
+  - **Mental Model** — shared objects + refs, independent HEAD/index, `.git`-as-file pointer, same-branch invariant.
+  - **When to Use** — decision table + scale thresholds (1-4 raw commands / 5-10 scripted / >10 pool).
+  - **Primary Path — Claude Code Native** — `--worktree` flag, `isolation: worktree` agent frontmatter, EnterWorktree/ExitWorktree pattern. Every native path paired with raw-git equivalent to insulate from API rename.
+  - **Raw Git Path** — create / list / remove / prune / lock + pre-removal checklist.
+  - **7 Top Pitfalls** — same-branch invariant, node_modules duplication (pnpm fix), hooks + `core.hooksPath`, nested-worktree anti-pattern, concurrent `gc` corruption, tool compatibility, Windows path length.
+  - **Advanced Patterns (reference)** — bare-repo pro pattern (fsck.sh), pool pattern (Worktrunk, workmux), sparse-checkout combo. Each ~8 lines with tooling pointer.
+  - Quick Reference tables, Red Flags, Rationalizations table, Integration section (called by dispatching-parallel-agents, pairs with finishing-a-development-branch). 331 lines.
+- **dispatching-parallel-agents** — Updated the `using-git-worktrees` reference from "if skill not yet available" to "invoke for full lifecycle" now that the skill exists (fallback one-liner retained as defensive coding). 208 → 209 lines.
+
 ## [1.5.0] — 2026-04-16
 
 ### Changed

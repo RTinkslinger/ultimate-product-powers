@@ -44,7 +44,7 @@ digraph when_to_use {
 - Tasks touch the same module or package
 - Agents will run long enough for concurrent git operations to collide
 
-Use the **using-git-worktrees** skill for setup. Fallback if skill is not yet available: `git worktree add <path> -b <branch>` gives each agent its own directory and branch. Conflicts move to merge time where standard git tooling detects them
+Invoke the **using-git-worktrees** skill for the full lifecycle (create, isolate, cleanup, pitfalls). One-line fallback: `git worktree add <path> -b <branch>` gives each agent its own directory and branch. Conflicts move to merge time where standard git tooling detects them
 
 **Don't use parallel dispatch when:**
 - Failures are related (fix one might fix others)
