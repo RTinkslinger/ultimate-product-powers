@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0] — 2026-04-17
+Edited: receiving-code-review, requesting-code-review (UPP-native rebuild)
+- receiving: 6-step response chain with inline rationalization traps, 5 AI failure modes, structured/prose dual-path feedback handling, 3-source handling (user/AI agent/external), conditional routing to 3 UPP skills, deadlock resolution via second-opinion agent, 12 red flags
+- requesting: 4 mandatory trigger categories (all skip=No), canonical evidence bundle with redaction rule, agent dispatch protocol with fresh-context enforcement, 3 risk tiers, auto-chain to receiving, 8 red flags
+- Voice: "your human partner" framing replaced with role-neutral language throughout
+- Removed: Circle K easter egg, GitHub thread reply section, inline bash for SHA retrieval
+
 ## [1.8.1] — 2026-04-17
 Edited: verification-before-completion (one-line cleanup)
 
