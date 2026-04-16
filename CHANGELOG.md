@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.7.0] — 2026-04-16
+
+### Changed
+- **verification-before-completion** — Full pipeline rebuild (research → synthesis → spec → writing-skills → adversarial audits). Was: inherited from superpowers as-is (139 lines, with lineage refs to "24 failure memories" / "your human partner"). Now: 194 lines, UPP-native, AI-aware claim gate. Research: `research/19-verification-research.md` (6 topics via parallel-cli ultra-fast: false-completion patterns, exit code vs log parsing, in-session contamination, agent tool-call verification, evidence hierarchy, gate function design; ~40 sources with URLs). Synthesis: `docs/superpowers/brainstorms/2026-04-16-verification-synthesis.md` (FULL mode, self-validated PASS).
+
+  Changes from inherited version:
+  - **Removed** superpowers lineage refs ("24 failure memories", "your human partner") and the moralizing "Honesty is a core value" section.
+  - **Iron Law preserved verbatim** — empirically load-bearing rhetoric (preserved per synthesis Phase 4 F3 mitigation: rationalization tables alone get treated as data; the absolute Iron Law overrides agent self-rationalization more often than procedural checklists).
+  - **Gate Function rewritten** as 5 ordered steps with exit-code-first checking (was: 5 steps without explicit exit-code emphasis). Exit code emphasis sourced from research Topic B (POSIX contract; production incidents Cloudflare Nov 2025 / Clerk Jun 2025 / GitLab Jan 2025 / Jenkins CVE-2025-59476 all caused by log-string parsing instead of exit code).
+  - **Tiered Evidence (new)** — Tier 1 routine claims (exit code + 1-line output) vs Tier 2 bug-fix/regression (TDD red-green negative-control sequence with `git stash` workflow). Tiering resolves over-gating anti-pattern from research Topic F.
+  - **AI-Specific Failure Modes (new)** — 5 documented production failure patterns: in-session test cache contamination, log fabrication / extrapolation, sandbox failure → fabricated success, prompt injection via log content (Jenkins CVE-2025-59476), agent tool-call output deception (Replit DB delete + 4000 fabricated records, Jul 2025).
+  - **Rationalization table** with inline incident vignettes — terraform destroy 1.94M rows (Feb 2025), Replit DB delete (Jul 2025), Cloudflare outage (Nov 2025) — each binds an excuse to a real consequence (research Topic D production incident reports).
+  - **UPP Integration (new)** — 4 explicit pairings, each verified against UPP plugin inventory + each with inline fallback: `test-driven-development` (Tier 2 negative control), `finishing-a-development-branch` (defers branch-level test invocation to its Step 1a), `systematic-debugging` (root cause vs workaround when verification fails), `executing-plans` (per-task gate).
+  - **Common Mistakes (new)** — 5 specific patterns: log-text inference, in-session retesting, trusting agent tool-call output, silencing errors instead of fixing, skipping TDD red phase.
+
+  Brainstorming was skipped intentionally for this rebuild — synthesis encoded all design decisions across 6 research topics + competing-hypothesis selection + adversarial pre-mortem + self-validated PASS. No discovery questions remained open.
+
 ## [1.6.0] — 2026-04-16
 
 ### Changed
