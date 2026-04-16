@@ -3,7 +3,7 @@
 ## [1.8.1] — 2026-04-17
 
 ### Changed
-- **verification-before-completion** — One-line cleanup. Removed legacy plugin-lineage reference from "AI-Specific Failure Modes" section header. Was: *"These post-date the original superpowers version; they are documented production failures from 2024-2026."* Now: *"These are documented production failures from 2024-2026."* The temporal-provenance framing served the author, not the agent reading the skill at activation moment. Same class of cruft removed from §4.2 (Iron Law) in v1.8.0; v1.8.1 closes the inconsistency. SKILL.md still 253 lines.
+- **verification-before-completion** — One-line cleanup. Removed a 9-word legacy plugin-lineage reference from the "AI-Specific Failure Modes" section opening. Replaced with a tighter framing that drops the temporal-provenance prefix (which served the author, not the agent reading the skill at activation moment). Same class of cruft removed from §4.2 (Iron Law) in v1.8.0; v1.8.1 closes the inconsistency. SKILL.md still 253 lines.
 - **Repo-wide:** scrubbed all references to inherited prior-plugin lineage from README, CHANGELOG, CLAUDE.md, and prior release notes (v1.8.0, v1.7.0, v1.6.0, v1.4.0). UPP is now fully self-standing in its public-facing surface — no references to legacy plugins anywhere on the repo or release pages. Replacement vocabulary: "prior version" / "inherited version" / "legacy boilerplate" / parenthetical drops.
 
 ## [1.8.0] — 2026-04-17
