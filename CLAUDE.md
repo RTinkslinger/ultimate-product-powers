@@ -16,7 +16,7 @@ Development happens in the dev workspace at `~/Claude Projects/Skills Factory/Ul
 **Rules:**
 - Never commit research files, specs, plans, or synthesis documents here
 - Every file in this repo ships to users
-- Zero superpowers references anywhere
+- Zero references to legacy/inherited plugin lineage anywhere
 - All skills must be fully self-contained (no external plugin dependencies)
 - Supporting files (prompt templates, reference docs, scripts) live alongside their skill
 - v0-sdk is vendored in `scripts/node_modules/` — no user npm install needed
@@ -33,7 +33,7 @@ Development happens in the dev workspace at `~/Claude Projects/Skills Factory/Ul
 
 When a skill is modified in the dev workspace:
 1. Copy the updated file(s) to the matching path here
-2. Verify zero superpowers references: `grep -ri "superpowers" skills/`
+2. Verify no legacy-plugin lineage references slipped in (skill body should stand on its own without referencing prior plugin origins)
 3. Commit + push
 4. Users run `/plugin update upp@ultimate-product-powers` to get the update
 

@@ -133,7 +133,7 @@ git checkout HEAD -- <reverted-files>
 
 ## AI-Specific Failure Modes
 
-These post-date the original superpowers version; they are documented production failures from 2024-2026. Each mode contains: Mechanism / Symptom / Detection signal / Mitigation / Documented incident.
+These are documented production failures from 2024-2026. Each mode contains: Mechanism / Symptom / Detection signal / Mitigation / Documented incident.
 
 ### 1. In-session test cache contamination
 

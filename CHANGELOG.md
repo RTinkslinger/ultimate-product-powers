@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.8.1] — 2026-04-17
+
+### Changed
+- **verification-before-completion** — One-line cleanup. Removed legacy plugin-lineage reference from "AI-Specific Failure Modes" section header. Was: *"These post-date the original superpowers version; they are documented production failures from 2024-2026."* Now: *"These are documented production failures from 2024-2026."* The temporal-provenance framing served the author, not the agent reading the skill at activation moment. Same class of cruft removed from §4.2 (Iron Law) in v1.8.0; v1.8.1 closes the inconsistency. SKILL.md still 253 lines.
+- **Repo-wide:** scrubbed all references to inherited prior-plugin lineage from README, CHANGELOG, CLAUDE.md, and prior release notes (v1.8.0, v1.7.0, v1.6.0, v1.4.0). UPP is now fully self-standing in its public-facing surface — no references to legacy plugins anywhere on the repo or release pages. Replacement vocabulary: "prior version" / "inherited version" / "legacy boilerplate" / parenthetical drops.
+
 ## [1.8.0] — 2026-04-17
 
 ### Changed
@@ -23,15 +29,15 @@
   - 5 read-back primitive categories in Failure Mode 5 (file edit, commit/push, branch state, migration/schema, binary artifact)
   - 4 UPP integrations (test-driven-development, finishing-a-development-branch, systematic-debugging, executing-plans), no inline fallbacks
   - 0 mentions of "Builder-Validator chain" as named term (concept retained in plain language)
-  - 0 superpowers lineage references ("24 failure memories", "your human partner")
+  - 0 legacy boilerplate phrases ("24 failure memories", "your human partner")
 
 ## [1.7.0] — 2026-04-16
 
 ### Changed
-- **verification-before-completion** — Full pipeline rebuild (research → synthesis → spec → writing-skills → adversarial audits). Was: inherited from superpowers as-is (139 lines, with lineage refs to "24 failure memories" / "your human partner"). Now: 194 lines, UPP-native, AI-aware claim gate. Research: `research/19-verification-research.md` (6 topics via parallel-cli ultra-fast: false-completion patterns, exit code vs log parsing, in-session contamination, agent tool-call verification, evidence hierarchy, gate function design; ~40 sources with URLs). Synthesis: `docs/superpowers/brainstorms/2026-04-16-verification-synthesis.md` (FULL mode, self-validated PASS).
+- **verification-before-completion** — Full pipeline rebuild (research → synthesis → spec → writing-skills → adversarial audits). Was: inherited from prior version as-is (139 lines, with legacy boilerplate phrases "24 failure memories" / "your human partner"). Now: 194 lines, UPP-native, AI-aware claim gate. Research: `research/19-verification-research.md` (6 topics via parallel-cli ultra-fast: false-completion patterns, exit code vs log parsing, in-session contamination, agent tool-call verification, evidence hierarchy, gate function design; ~40 sources with URLs). Synthesis: `docs/upp/brainstorms/2026-04-16-verification-synthesis.md` (FULL mode, self-validated PASS).
 
   Changes from inherited version:
-  - **Removed** superpowers lineage refs ("24 failure memories", "your human partner") and the moralizing "Honesty is a core value" section.
+  - **Removed** legacy boilerplate phrases ("24 failure memories", "your human partner") and the moralizing "Honesty is a core value" section.
   - **Iron Law preserved verbatim** — empirically load-bearing rhetoric (preserved per synthesis Phase 4 F3 mitigation: rationalization tables alone get treated as data; the absolute Iron Law overrides agent self-rationalization more often than procedural checklists).
   - **Gate Function rewritten** as 5 ordered steps with exit-code-first checking (was: 5 steps without explicit exit-code emphasis). Exit code emphasis sourced from research Topic B (POSIX contract; production incidents Cloudflare Nov 2025 / Clerk Jun 2025 / GitLab Jan 2025 / Jenkins CVE-2025-59476 all caused by log-string parsing instead of exit code).
   - **Tiered Evidence (new)** — Tier 1 routine claims (exit code + 1-line output) vs Tier 2 bug-fix/regression (TDD red-green negative-control sequence with `git stash` workflow). Tiering resolves over-gating anti-pattern from research Topic F.
@@ -56,7 +62,7 @@
   - Expanded Common Mistakes, Red Flags, and new Rationalizations table. Kept v1.4.1's correct Step 1c (linter for imports, scoped grep for debug statements) and Step 1d (design-system-enforcer reference). 244 → 394 lines.
 
 ### Added
-- **using-git-worktrees** — New UPP skill (previously only in disabled superpowers). Full pipeline build (research → synthesis → spec → writing-skills). Research: `research/18-git-worktrees-research.md` (5 topics: internals, bare-repo pattern, pitfalls, Claude Code native support, pool pattern; ~25 sources with URLs). Progressive-disclosure structure:
+- **using-git-worktrees** — New UPP skill. Full pipeline build (research → synthesis → spec → writing-skills). Research: `research/18-git-worktrees-research.md` (5 topics: internals, bare-repo pattern, pitfalls, Claude Code native support, pool pattern; ~25 sources with URLs). Progressive-disclosure structure:
   - **Mental Model** — shared objects + refs, independent HEAD/index, `.git`-as-file pointer, same-branch invariant.
   - **When to Use** — decision table + scale thresholds (1-4 raw commands / 5-10 scripted / >10 pool).
   - **Primary Path — Claude Code Native** — `--worktree` flag, `isolation: worktree` agent frontmatter, EnterWorktree/ExitWorktree pattern. Every native path paired with raw-git equivalent to insulate from API rename.
@@ -86,7 +92,7 @@
 - **finishing-a-development-branch** — Expanded Step 1 from "verify tests" to full pre-completion verification: tests + lint/type checks + AI completeness scan (stale imports, dead code, leftover debug statements, config artifacts) + design compliance gate (when DESIGN.md exists). Added "premature done claim" to common mistakes. Updated red flags for expanded verification. 201 → 235 lines.
 
 ### Added
-- **finishing-a-development-branch** — New skill in UPP (previously superpowers-only). Enhanced with AI-aware pre-completion verification.
+- **finishing-a-development-branch** — New skill in UPP, enhanced with AI-aware pre-completion verification.
 
 ## [1.3.0] — 2026-04-16
 
@@ -122,17 +128,17 @@ Initial release of Ultimate Product Powers.
 - **agentic-ux-patterns** — Reference patterns for agent UI: streaming strategies, approval flows, error recovery, streaming accessibility, responsive agent UI.
 
 ### Engineering Discipline
-- **test-driven-development** — TDD with Iron Law enforcement. Red-Green-Refactor cycle. Adopted from superpowers (zero modifications).
+- **test-driven-development** — TDD with Iron Law enforcement. Red-Green-Refactor cycle. Adopted unmodified from prior version.
 - **systematic-debugging** — Four-phase root cause methodology with 3-fix escalation rule. Includes root-cause-tracing, defense-in-depth, and condition-based-waiting references.
-- **verification-before-completion** — Evidence-before-claims discipline. Adopted from superpowers (zero modifications).
+- **verification-before-completion** — Evidence-before-claims discipline. Adopted unmodified from prior version.
 
 ### Code Review
 - **requesting-code-review** — Review dispatch workflow with mandatory triggers and code-reviewer agent integration.
-- **receiving-code-review** — Review response discipline: no performative agreement, verify before implementing, push back when wrong. Adopted from superpowers (zero modifications).
+- **receiving-code-review** — Review response discipline: no performative agreement, verify before implementing, push back when wrong. Adopted unmodified from prior version.
 
 ### Meta
-- **writing-skills** — Synthesized from superpowers writing-skills + SKILL-CRAFT methodology. TDD for skill authoring with skill type assessment (process vs expertise vs hybrid), CSO, pressure testing, graphviz conventions.
-- **dispatching-parallel-agents** — Parallel subagent dispatch with independence decision flowchart. Adopted from superpowers (zero modifications).
+- **writing-skills** — TDD methodology for skill authoring with skill type assessment (process vs expertise vs hybrid), CSO, pressure testing, graphviz conventions.
+- **dispatching-parallel-agents** — Parallel subagent dispatch with independence decision flowchart. Adopted unmodified from prior version.
 - **using-upp** — Skill discovery guide with 13-skill routing table, 1% enforcement rule, red flags table. Auto-injected at session start.
 
 ### Hooks

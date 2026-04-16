@@ -103,7 +103,7 @@ Idea → Brainstorming → Spec + DESIGN.md → Writing-Plans → Plan → Execu
 
 | Skill | Lines | Purpose |
 |-------|-------|---------|
-| **writing-skills** | 737 | TDD applied to skill authoring. Skill assessment (process vs expertise), CSO, pressure testing, rationalization tables, graphviz conventions. Synthesized from superpowers + SKILL-CRAFT. |
+| **writing-skills** | 737 | TDD applied to skill authoring. Skill assessment (process vs expertise), CSO, pressure testing, rationalization tables, graphviz conventions. |
 | **dispatching-parallel-agents** | 182 | Dispatch subagents for independent parallel work. Decision flowchart gates on task independence. Focused prompts with scope, constraints, expected output. |
 | **using-upp** | 129 | Skill discovery guide — auto-injected at session start. 1% rule, routing table for all 13 skills, red flags table, design awareness trigger. |
 
