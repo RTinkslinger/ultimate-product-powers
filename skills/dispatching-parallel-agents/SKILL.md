@@ -39,10 +39,18 @@ digraph when_to_use {
 - Each problem can be understood without context from others
 - No shared state between investigations
 
-**Don't use when:**
+**Consider worktree isolation** when:
+- File ownership lists overlap between agents
+- Tasks touch the same module or package
+- Agents will run long enough for concurrent git operations to collide
+
+Use the **using-git-worktrees** skill for setup. Fallback if skill is not yet available: `git worktree add <path> -b <branch>` gives each agent its own directory and branch. Conflicts move to merge time where standard git tooling detects them
+
+**Don't use parallel dispatch when:**
 - Failures are related (fix one might fix others)
 - Need to understand full system state
-- Agents would interfere with each other
+- Agents would interfere with each other (editing same files, using same resources)
+- Only 2 tasks — each parallel agent loads its own context window. Consider whether the coordination overhead justifies parallel vs sequential
 
 ## The Pattern
 
@@ -61,7 +69,9 @@ Each agent gets:
 - **Specific scope:** One test file or subsystem
 - **Clear goal:** Make these tests pass
 - **File ownership:** Explicit list of files this agent MAY edit. No other files. This prevents conflicts — if agents can't edit the same files, they can't produce merge conflicts
-- **Shared spec reference:** If a plan or spec exists, include the relevant section so all agents work from the same source of truth
+  - **Pipeline dispatch (plan exists):** Use file targets from the plan's task descriptions
+  - **Standalone dispatch (no plan):** During decomposition, identify which files each sub-task will touch. If any file appears in 2+ sub-tasks → those tasks are NOT independent. Merge overlapping tasks or sequence them
+- **Shared spec reference:** If a plan or spec exists, include the relevant plan section in each agent's prompt so all agents work from the same source of truth
 - **Constraints:** Don't change files outside your ownership list
 - **Expected output:** Summary of what you found and fixed
 
@@ -80,9 +90,9 @@ Task("Fix tool-approval-race-conditions.test.ts failures")
 When agents return:
 - Read each summary
 - Verify fixes don't conflict (check `git diff` for overlapping file edits)
-- **Merge sequentially** — merge one agent's branch, then rebase remaining branches onto updated main before merging the next. This catches conflicts one at a time instead of all at once
-- Run full test suite after ALL merges
+- **Merge sequentially with test verification** — merge one agent's branch, run tests. If tests pass, rebase remaining branches onto updated main, then merge the next. If tests fail post-merge, revert the last merge, investigate the suspect changes, fix, then re-merge. This catches conflicts one at a time instead of discovering them all at the end
 - Spot check — agents can make systematic errors (hallucinated APIs, happy-path-only handlers)
+- **If one agent fails:** Revert any partial edits from the failed agent. Merge the successful results. Create a new task for the failed work. Don't wait for all agents to succeed before merging any
 
 ## Agent Prompt Structure
 
@@ -117,6 +127,10 @@ These are timing/race condition issues. Your task:
    - Adjusting test expectations if testing changed behavior
 
 Do NOT just increase timeouts - find the real issue.
+
+If you see build errors or test failures in files you did NOT edit,
+do NOT try to fix them. Another agent is likely mid-edit.
+Wait, then retry your build/test.
 
 Return: Summary of what you found and what you fixed.
 ```
@@ -165,7 +179,7 @@ Agent 3 → Fix tool-approval-race-conditions.test.ts
 - Agent 2: Fixed event structure bug (threadId in wrong place)
 - Agent 3: Added wait for async tool execution to complete
 
-**Integration:** All fixes independent, no conflicts, full suite green
+**Integration:** Merged Agent 1, ran tests (green). Rebased Agent 2, merged, ran tests (green). Rebased Agent 3, merged, ran tests (green). All fixes independent, zero conflicts
 
 **Time saved:** 3 problems solved in parallel vs sequentially
 
@@ -181,8 +195,9 @@ Agent 3 → Fix tool-approval-race-conditions.test.ts
 After agents return:
 1. **Review each summary** - Understand what changed
 2. **Check for conflicts** - Did agents edit same code?
-3. **Run full suite** - Verify all fixes work together
+3. **Merge sequentially with tests** - Merge one, run tests, rebase next (see Review and Integrate)
 4. **Spot check** - Agents can make systematic errors
+5. **Handle failures** - Revert partial edits from failed agents before merging successful ones
 
 ## Real-World Impact
 

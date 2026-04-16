@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.5.0] — 2026-04-16
+
+### Changed
+- **dispatching-parallel-agents** — Full pipeline rebuild (research synthesis → brainstorm → spec → writing-skills → adversarial audits). File ownership dual-path (pipeline: from plan, standalone: agent determines during decomposition with overlap detection). Sequential merge fixed: tests between each merge, not after all — if tests fail post-merge, revert last merge, investigate, re-merge. "Don't fix other agents' errors" rule added to agent prompt template. Failure handling: revert partial edits from failed agent, merge successful, create new task. Worktree isolation recommendation with concrete triggers + inline fallback. Cost awareness with context window rationale. Real Example updated to demonstrate between-each-merge procedure. 195 → 208 lines.
+
 ## [1.4.1] — 2026-04-16
 
 ### Fixed
