@@ -2,7 +2,7 @@
 
 **Design-aware product development skills for Claude Code.**
 
-UPP is a Claude Code plugin that covers the full product development lifecycle — from brainstorming ideas into working designs, through implementation planning, to multi-agent execution with design-compliant code review. It ships 16 skills, 2 agents, and 3 hooks that work together as a coordinated pipeline.
+UPP is a Claude Code plugin that covers the full product development lifecycle — from brainstorming ideas into working designs, through implementation planning, to multi-agent execution with design-compliant code review. It ships 17 skills, 3 agents, and 3 hooks that work together as a coordinated pipeline.
 
 What makes UPP different from general-purpose coding skills: **design is a first-class concern throughout.** When you build frontends, UPP's brainstorming generates working prototypes and extracts a DESIGN.md that flows through every subsequent skill. Plans order tasks by design dependency. Subagents receive design tokens in their context. Code review checks component compliance against the spec. When you build backends or non-UI projects, the design layer silently deactivates and the engineering discipline skills take over.
 
@@ -16,7 +16,7 @@ What makes UPP different from general-purpose coding skills: **design is a first
 /plugin marketplace add RTinkslinger/ultimate-product-powers
 ```
 
-That's it. All 16 skills, 2 agents, and 3 hooks are immediately available.
+That's it. All 17 skills, 3 agents, and 3 hooks are immediately available.
 
 ### Update
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.0] — 2026-04-17
+Added: security-review skill, security-reviewer agent
+- security-review: 3-step security gate (threat-model, scan, cite evidence), per-language SAST command table (5 ecosystems), Iron Law severity enforcement (critical/high = hard block), 6 AI-specific threat categories (prompt injection, slopsquatting, insecure output handling, config-as-attack-surface, tool poisoning, agent trust boundaries), 10x hardened slopsquatting verification protocol, secrets detection with rotation guidance, always-dispatch security-reviewer agent
+- security-reviewer: adversarial reviewer in independent context, 6 AI-threat deep dives with grep detection patterns, independent SAST scan protocol, 5-dimension adversarial checklist, structured output format
+- Plugin: 17 skills, 3 agents, 3 hooks
+
 ## [1.9.0] — 2026-04-17
 Edited: receiving-code-review, requesting-code-review (UPP-native rebuild)
 - receiving: 6-step response chain with inline rationalization traps, 5 AI failure modes, structured/prose dual-path feedback handling, 3-source handling (user/AI agent/external), conditional routing to 3 UPP skills, deadlock resolution via second-opinion agent, 12 red flags
