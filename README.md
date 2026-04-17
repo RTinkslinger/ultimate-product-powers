@@ -95,6 +95,7 @@ UPP skills form a state machine. Each skill knows where it fits and what comes n
 Not everything is part of the linear pipeline. These skills fire on their own triggers:
 
 - `systematic-debugging` — fires when you encounter a bug, test failure, or unexpected behavior
+- `security-review` — fires when touching auth, crypto, API, config, infrastructure, or dependency files; when security concerns are mentioned
 - `using-git-worktrees` — fires when you need parallel branch checkouts or filesystem isolation
 - `dispatching-parallel-agents` — fires when you have 2+ independent tasks that can run concurrently
 - `product-redesign` — fires when overhauling an existing frontend's design system
@@ -243,6 +244,29 @@ Root-cause investigation before fixes. Four phases: Root Cause → Pattern Analy
 
 **3-fix escalation rule:** If 3 attempted fixes haven't resolved the issue, stop guessing and escalate — the problem is likely architectural, not a simple bug.
 
+#### security-review
+**Lines:** 192 | **Trigger:** Touching auth, crypto, API, middleware, config, infrastructure, or dependency files; security keywords mentioned; before deploys or merges
+
+3-step security gate that forces threat-modeling before proceeding, with an always-dispatched adversarial reviewer agent.
+
+**The gate (3 steps):**
+1. **Threat-model** — "What could an attacker do? What user input reaches this? What if this dependency is compromised?" Must name at least one specific threat.
+2. **Run scan** — per-language SAST command table (Python/Bandit, JS/Semgrep, Go/gosec, Rust/clippy, Java/Semgrep) + dependency audit + secrets check (gitleaks)
+3. **Cite evidence** — exit code + finding count + severity summary
+
+**Severity enforcement:**
+- Critical/High = Iron Law hard block (must fix)
+- Medium = warn + document
+- Low = track
+
+**6 AI-specific threats** — prompt injection via untrusted input, dependency hallucination (slopsquatting), insecure output handling, config-as-attack-surface, tool poisoning, agent trust boundaries. These are what SAST tools don't catch.
+
+**Slopsquatting verification protocol** (10x hardened) — 5 mandatory checks before installing any AI-suggested package: registry existence, download volume, maintainer reputation, recency, license. If any check fails: do not install.
+
+**Always dispatches** the `security-reviewer` agent for independent adversarial review. Agent challenges the gate for false negatives, rubber-stamped threat models, and missed vulnerability classes.
+
+**Integrates with:** `verification-before-completion` (security claims → Tier 2), `finishing-a-development-branch` (Step 1f), `systematic-debugging` (root-cause before security fix), `test-driven-development` (security regression tests).
+
 #### finishing-a-development-branch
 **Lines:** 394 | **Trigger:** Implementation complete, before merging, creating a PR, or removing a worktree
 
@@ -292,7 +316,7 @@ Decision flowchart gates on task independence before dispatching. Provides struc
 #### using-upp
 **Lines:** 230 | **Trigger:** Auto-injected at session start via SessionStart hook
 
-Skill discovery and routing guide. Contains the full pipeline state machine diagram, routing table for all 16 skills, red flags table, and the 1% rule: if there's even a 1% chance a skill applies, invoke it.
+Skill discovery and routing guide. Contains the full pipeline state machine diagram, routing table for all 17 skills, red flags table, and the 1% rule: if there's even a 1% chance a skill applies, invoke it.
 
 #### writing-skills
 **Lines:** 737 | **Trigger:** Creating new skills, editing existing skills, or verifying skills work
@@ -303,7 +327,7 @@ Meta-skill for authoring other skills. TDD applied to skill development: pressur
 
 ## Agents
 
-UPP ships two dedicated reviewer agents. Both operate in fresh context with no prior conversation — they evaluate artifacts only.
+UPP ships three dedicated reviewer agents. All operate in fresh context with no prior conversation — they evaluate artifacts only.
 
 ### code-reviewer
 **Lines:** 56 | **Dispatched by:** `requesting-code-review`, `executing-plans` three-gate pipeline
@@ -327,6 +351,25 @@ Reviews test suites BEFORE implementation begins. Has not seen implementation co
 - Behavior vs Implementation: is it testing what the code does or how?
 - Edge case coverage
 - Test isolation (no shared mutable state)
+
+### security-reviewer
+**Lines:** 208 | **Dispatched by:** `security-review` skill (always, on every security-surface change)
+
+Adversarial security reviewer that challenges the main context's gate findings. Operates in independent context — does not see the gate's reasoning, only its conclusions.
+
+**Deep dives on 6 AI-specific threats:**
+1. Prompt injection (full taxonomy: direct, indirect, protocol-level; named attacks: AIShellJack, Toxic Agent Flow, Log-To-Leak)
+2. Dependency hallucination / slopsquatting (registry verification with per-ecosystem commands)
+3. Insecure output handling (grep patterns for eval/exec/SQL injection sinks)
+4. Config-as-attack-surface (cross-ref CVE-2026-25725)
+5. Tool poisoning (MCP tool description audit)
+6. Agent trust boundaries (subagent permission scope check)
+
+**Independent scan protocol:** Runs SAST tools independently (not trusting the gate's results) and compares findings. Discrepancy = HIGH severity flag.
+
+**5-dimension adversarial checklist:** threat model quality, tool coverage, false negatives, severity classification, slopsquatting verification.
+
+**Tools:** Read, Grep, Bash, Glob (no Write/Edit — pure reviewer).
 
 ---
 
@@ -392,6 +435,9 @@ When `receiving-code-review` evaluates feedback, it may route to other skills:
 - Bug reports → `systematic-debugging`
 - Test concerns → `test-driven-development`
 
+### The security gate (security-review + security-reviewer)
+`security-review` fires on security-surface file changes and security keywords. It runs a 3-step gate (threat-model → scan → cite evidence), then always dispatches the `security-reviewer` agent for independent adversarial review. The agent challenges the gate's findings — if it finds additional critical/high issues, the Iron Law blocks progress. Also integrates as Step 1f in `finishing-a-development-branch` for pre-merge security verification.
+
 ### The TDD + test-reviewer gate
 `test-driven-development` enforces writing tests first. For task-level suites (>3 tests), the `test-reviewer` agent reviews the test suite before implementation begins — fresh context, no implementation bias.
 
@@ -441,6 +487,7 @@ skills/
   verification-before-completion/SKILL.md  # Evidence before claims
   requesting-code-review/SKILL.md        # Review dispatch + evidence bundling
   receiving-code-review/SKILL.md         # Review response discipline
+  security-review/SKILL.md               # Security gate + AI threat awareness
   finishing-a-development-branch/SKILL.md # Pre-merge verification
   using-git-worktrees/SKILL.md           # Worktree management
   writing-skills/                        # Skill authoring (meta-skill)
@@ -454,6 +501,7 @@ skills/
 agents/
   code-reviewer.md                       # Design-aware code reviewer
   test-reviewer.md                       # TDD RED phase test reviewer
+  security-reviewer.md                   # Adversarial security reviewer
 scripts/
   v0-generate.mjs                        # v0 prototype generation wrapper
   package.json
@@ -491,7 +539,7 @@ claude mcp add --scope user --transport http stitch https://stitch.googleapis.co
 
 See [CHANGELOG.md](CHANGELOG.md) for the full release history.
 
-Current version: **1.9.0** (16 skills, 2 agents, 3 hooks).
+Current version: **2.0.0** (17 skills, 3 agents, 3 hooks).
 
 ---
 
