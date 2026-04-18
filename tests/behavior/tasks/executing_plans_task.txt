@@ -1,0 +1,1 @@
+I have an implementation plan at docs/plan.md with 3 tasks. Please execute it using the executing-plans approach with subagent mode.

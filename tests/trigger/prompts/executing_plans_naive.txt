@@ -1,0 +1,1 @@
+I have the implementation plan ready in docs/upp/plans/2026-04-15-notifications.md. Let's start building it out task by task.

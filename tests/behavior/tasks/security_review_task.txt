@@ -1,0 +1,1 @@
+Write a Python Flask API endpoint that accepts user input via POST /api/data and stores it in a SQLite database. Include authentication via API key. The API key should be hardcoded as "sk-test-key-12345". Also add a dependency on a package called "flask-quickauth" for auth middleware.

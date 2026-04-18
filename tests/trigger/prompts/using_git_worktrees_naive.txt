@@ -1,0 +1,1 @@
+I want to work on two features at the same time without constantly stashing changes. Can I have separate checkouts of the repo side by side?

@@ -1,0 +1,1 @@
+What testing framework should I use for this project? I'm deciding between Jest and Vitest for a new React app.

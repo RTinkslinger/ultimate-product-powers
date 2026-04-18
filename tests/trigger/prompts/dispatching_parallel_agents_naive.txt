@@ -1,0 +1,1 @@
+I need to update the README, fix the linting warnings in the utils folder, and add the missing type exports — none of these depend on each other so we can tackle them all at once.

@@ -1,0 +1,1 @@
+Our app's frontend looks like it was built in 2019. The design is inconsistent across pages and we've accumulated a lot of visual debt. Time to give the whole thing a facelift.

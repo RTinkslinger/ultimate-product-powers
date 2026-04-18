@@ -1,0 +1,1 @@
+Use writing-plans to create a plan from the search redesign spec.

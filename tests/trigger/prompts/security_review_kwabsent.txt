@@ -1,0 +1,1 @@
+I changed the .env file and added new credentials for the staging database. Does the way I'm loading them look right?

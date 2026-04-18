@@ -1,0 +1,1 @@
+Here are the requirements for the new permissions system. Break this down into actionable tasks before we start coding.

@@ -1,0 +1,1 @@
+Our frontend renders components from a JSON registry that the agent populates at runtime. I need to handle what happens when the agent sends an unknown component type.

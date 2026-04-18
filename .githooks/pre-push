@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# UPP pre-push hook: run quick tests (L1 + L2) before pushing
+set -e
+
+echo "Running UPP quick tests before push..."
+
+cd "$(git rev-parse --show-toplevel)"
+
+if [ -d "tests/.venv" ]; then
+    source tests/.venv/bin/activate
+    cd tests && pytest -m quick --tb=short -q
+else
+    echo "WARNING: test venv not set up. Run 'cd tests && ./run.sh --co' to initialize."
+    echo "Skipping pre-push tests."
+fi

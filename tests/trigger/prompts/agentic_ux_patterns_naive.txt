@@ -1,0 +1,1 @@
+I'm building a chat interface where the AI responses stream in with tool call results displayed inline. How should I handle the loading states and partial rendering?

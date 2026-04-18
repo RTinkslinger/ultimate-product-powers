@@ -1,0 +1,1 @@
+Use systematic-debugging to figure out why the WebSocket connection drops after exactly 30 seconds.

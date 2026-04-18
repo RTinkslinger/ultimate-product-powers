@@ -1,0 +1,1 @@
+I just updated the login flow to accept OAuth tokens from a third-party provider. Can you check if there are any issues with how we're validating those tokens?

@@ -1,0 +1,1 @@
+The integration tests in auth.test.ts are failing on CI but pass locally. I have no idea why.

@@ -1,0 +1,1 @@
+I want to make a new skill that teaches Claude how to write database migrations safely. Let's build it from scratch.

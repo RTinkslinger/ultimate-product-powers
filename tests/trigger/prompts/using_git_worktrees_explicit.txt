@@ -1,0 +1,1 @@
+Use using-git-worktrees to set up an isolated checkout for the auth refactor branch.

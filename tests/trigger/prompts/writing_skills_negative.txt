@@ -1,0 +1,1 @@
+Can you write a Python script that parses markdown files and extracts all headers into a table of contents?

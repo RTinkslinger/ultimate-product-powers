@@ -1,0 +1,1 @@
+Can you add error boundary components to all our route pages? I want to improve the user experience when something goes wrong.

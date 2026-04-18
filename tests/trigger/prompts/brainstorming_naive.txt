@@ -1,0 +1,1 @@
+I want to add a collaborative whiteboard to the app where teams can sketch ideas together in real-time. Haven't thought through the details yet.

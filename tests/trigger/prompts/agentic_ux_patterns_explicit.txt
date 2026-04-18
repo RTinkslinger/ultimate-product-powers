@@ -1,0 +1,1 @@
+Use agentic-ux-patterns to guide the streaming UI implementation for our agent dashboard.

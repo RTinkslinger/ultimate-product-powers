@@ -1,0 +1,54 @@
+{
+  "security-review": {
+    "task_file": "security_review_task.txt",
+    "green_markers": [
+      "Security gate clean",
+      "security-reviewer agent",
+      "verify-before-install",
+      "DO NOT INSTALL",
+      "gitleaks detect"
+    ]
+  },
+  "verification-before-completion": {
+    "task_file": "verification_task.txt",
+    "green_markers": [
+      "exit 0",
+      "fresh terminal",
+      "Tier 1",
+      "negative control"
+    ]
+  },
+  "test-driven-development": {
+    "task_file": "tdd_task.txt",
+    "green_markers": [
+      "Write the failing test",
+      "Run it to make sure it fails",
+      "test-reviewer"
+    ]
+  },
+  "executing-plans": {
+    "task_file": "executing_plans_task.txt",
+    "green_markers": [
+      "spec compliance",
+      "code quality",
+      "three-gate review"
+    ]
+  },
+  "finishing-a-development-branch": {
+    "task_file": "finishing_branch_task.txt",
+    "green_markers": [
+      "Step 1a",
+      "Step 1b",
+      "AI completeness scan",
+      "diff self-consistency"
+    ]
+  },
+  "requesting-code-review": {
+    "task_file": "requesting_review_task.txt",
+    "green_markers": [
+      "evidence bundle",
+      "risk tier",
+      "redaction rule"
+    ]
+  }
+}

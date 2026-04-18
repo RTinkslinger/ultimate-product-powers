@@ -1,0 +1,1 @@
+I need to build a static FAQ page with an accordion component for expanding answers. No dynamic content, just hardcoded questions and answers.

@@ -1,0 +1,1 @@
+The spec for the billing integration is finalized in docs/specs/billing.md. I need a step-by-step implementation plan I can hand off to an engineer.

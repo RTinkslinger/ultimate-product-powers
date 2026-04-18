@@ -1,0 +1,1 @@
+How do I resolve a merge conflict between two branches? I have conflicting changes in the same file.

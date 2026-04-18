@@ -1,0 +1,1 @@
+A teammate left comments on my PR saying the error handling is too verbose. How should I respond to that feedback?

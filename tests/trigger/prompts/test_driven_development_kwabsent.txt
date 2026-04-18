@@ -1,0 +1,1 @@
+I have a bugfix for the cart total calculation that rounds incorrectly. Let's fix it properly.

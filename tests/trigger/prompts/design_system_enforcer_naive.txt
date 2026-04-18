@@ -1,0 +1,1 @@
+I need to build a settings page with a sidebar nav, a form for profile fields, and a toggle for email preferences. Make sure it matches our existing components.

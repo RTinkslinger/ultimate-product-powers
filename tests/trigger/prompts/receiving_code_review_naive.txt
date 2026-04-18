@@ -1,0 +1,1 @@
+The reviewer flagged three issues: they say the caching layer is redundant, the error types are too broad, and there's a potential race condition in the queue consumer. Let me go through each one.

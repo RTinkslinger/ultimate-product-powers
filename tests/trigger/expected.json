@@ -1,0 +1,342 @@
+{
+  "security_review_naive.txt": {
+    "skill": "security-review",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "security_review_explicit.txt": {
+    "skill": "security-review",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "security_review_kwabsent.txt": {
+    "skill": "security-review",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "security_review_negative.txt": {
+    "skill": "security-review",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "verification_before_completion_naive.txt": {
+    "skill": "verification-before-completion",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "verification_before_completion_explicit.txt": {
+    "skill": "verification-before-completion",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "verification_before_completion_kwabsent.txt": {
+    "skill": "verification-before-completion",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "verification_before_completion_negative.txt": {
+    "skill": "verification-before-completion",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "test_driven_development_naive.txt": {
+    "skill": "test-driven-development",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "test_driven_development_explicit.txt": {
+    "skill": "test-driven-development",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "test_driven_development_kwabsent.txt": {
+    "skill": "test-driven-development",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "test_driven_development_negative.txt": {
+    "skill": "test-driven-development",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "systematic_debugging_naive.txt": {
+    "skill": "systematic-debugging",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "systematic_debugging_explicit.txt": {
+    "skill": "systematic-debugging",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "systematic_debugging_kwabsent.txt": {
+    "skill": "systematic-debugging",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "systematic_debugging_negative.txt": {
+    "skill": "systematic-debugging",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "executing_plans_naive.txt": {
+    "skill": "executing-plans",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "executing_plans_explicit.txt": {
+    "skill": "executing-plans",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "executing_plans_kwabsent.txt": {
+    "skill": "executing-plans",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "executing_plans_negative.txt": {
+    "skill": "executing-plans",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "finishing_a_development_branch_naive.txt": {
+    "skill": "finishing-a-development-branch",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "finishing_a_development_branch_explicit.txt": {
+    "skill": "finishing-a-development-branch",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "finishing_a_development_branch_kwabsent.txt": {
+    "skill": "finishing-a-development-branch",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "finishing_a_development_branch_negative.txt": {
+    "skill": "finishing-a-development-branch",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "brainstorming_naive.txt": {
+    "skill": "brainstorming",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "brainstorming_explicit.txt": {
+    "skill": "brainstorming",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "brainstorming_kwabsent.txt": {
+    "skill": "brainstorming",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "brainstorming_negative.txt": {
+    "skill": "brainstorming",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "writing_plans_naive.txt": {
+    "skill": "writing-plans",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "writing_plans_explicit.txt": {
+    "skill": "writing-plans",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "writing_plans_kwabsent.txt": {
+    "skill": "writing-plans",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "writing_plans_negative.txt": {
+    "skill": "writing-plans",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "writing_skills_naive.txt": {
+    "skill": "writing-skills",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "writing_skills_explicit.txt": {
+    "skill": "writing-skills",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "writing_skills_kwabsent.txt": {
+    "skill": "writing-skills",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "writing_skills_negative.txt": {
+    "skill": "writing-skills",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "dispatching_parallel_agents_naive.txt": {
+    "skill": "dispatching-parallel-agents",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "dispatching_parallel_agents_explicit.txt": {
+    "skill": "dispatching-parallel-agents",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "dispatching_parallel_agents_kwabsent.txt": {
+    "skill": "dispatching-parallel-agents",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "dispatching_parallel_agents_negative.txt": {
+    "skill": "dispatching-parallel-agents",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "requesting_code_review_naive.txt": {
+    "skill": "requesting-code-review",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "requesting_code_review_explicit.txt": {
+    "skill": "requesting-code-review",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "requesting_code_review_kwabsent.txt": {
+    "skill": "requesting-code-review",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "requesting_code_review_negative.txt": {
+    "skill": "requesting-code-review",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "receiving_code_review_naive.txt": {
+    "skill": "receiving-code-review",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "receiving_code_review_explicit.txt": {
+    "skill": "receiving-code-review",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "receiving_code_review_kwabsent.txt": {
+    "skill": "receiving-code-review",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "receiving_code_review_negative.txt": {
+    "skill": "receiving-code-review",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "design_system_enforcer_naive.txt": {
+    "skill": "design-system-enforcer",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "design_system_enforcer_explicit.txt": {
+    "skill": "design-system-enforcer",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "design_system_enforcer_kwabsent.txt": {
+    "skill": "design-system-enforcer",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "design_system_enforcer_negative.txt": {
+    "skill": "design-system-enforcer",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "product_redesign_naive.txt": {
+    "skill": "product-redesign",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "product_redesign_explicit.txt": {
+    "skill": "product-redesign",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "product_redesign_kwabsent.txt": {
+    "skill": "product-redesign",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "product_redesign_negative.txt": {
+    "skill": "product-redesign",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "agentic_ux_patterns_naive.txt": {
+    "skill": "agentic-ux-patterns",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "agentic_ux_patterns_explicit.txt": {
+    "skill": "agentic-ux-patterns",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "agentic_ux_patterns_kwabsent.txt": {
+    "skill": "agentic-ux-patterns",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "agentic_ux_patterns_negative.txt": {
+    "skill": "agentic-ux-patterns",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "using_git_worktrees_naive.txt": {
+    "skill": "using-git-worktrees",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "using_git_worktrees_explicit.txt": {
+    "skill": "using-git-worktrees",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "using_git_worktrees_kwabsent.txt": {
+    "skill": "using-git-worktrees",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "using_git_worktrees_negative.txt": {
+    "skill": "using-git-worktrees",
+    "type": "negative",
+    "should_trigger": false
+  },
+  "using_upp_naive.txt": {
+    "skill": "using-upp",
+    "type": "naive",
+    "should_trigger": true
+  },
+  "using_upp_explicit.txt": {
+    "skill": "using-upp",
+    "type": "explicit",
+    "should_trigger": true
+  },
+  "using_upp_kwabsent.txt": {
+    "skill": "using-upp",
+    "type": "keyword-absent",
+    "should_trigger": true
+  },
+  "using_upp_negative.txt": {
+    "skill": "using-upp",
+    "type": "negative",
+    "should_trigger": false
+  }
+}
