@@ -1,1 +1,1 @@
-I have an implementation plan at docs/plan.md with 3 tasks. Please execute it using the executing-plans approach with subagent mode.
+I have an implementation plan with 3 tasks. Execute this plan. Do not ask clarifying questions. Describe how you would execute it step by step.

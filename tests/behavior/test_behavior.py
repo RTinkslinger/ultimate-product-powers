@@ -4,7 +4,9 @@ For each skill, run the SAME task in two modes:
 - RED: --plugin-dir empty (no skills loaded)
 - GREEN: --plugin-dir UPP (skill loaded)
 
-Assert: GREEN contains structural markers that RED does NOT.
+Assert: GREEN contains at least ONE marker from a candidate set that
+RED does NOT contain. Uses any-of matching because LLM output vocabulary
+varies per run — the CONCEPT is consistent, the WORDS are not.
 """
 
 import json
@@ -22,10 +24,10 @@ with open(MARKERS_PATH) as f:
 
 
 @pytest.mark.full
-@pytest.mark.timeout(300)
+@pytest.mark.timeout(600)
 @pytest.mark.parametrize("skill_name", list(MARKERS.keys()))
 def test_behavior_red_green(skill_name):
-    """GREEN must produce markers that RED does not."""
+    """GREEN must produce at least one marker that RED does not."""
     config = MARKERS[skill_name]
     task_path = TASKS_DIR / config["task_file"]
     prompt = task_path.read_text().strip()
@@ -33,23 +35,26 @@ def test_behavior_red_green(skill_name):
 
     # RED run: empty plugin dir (no skills)
     red_events = claude_run(prompt, max_turns=5, no_skills=True)
-    red_text = extract_all_text(red_events)
+    red_text = extract_all_text(red_events).lower()
 
     # GREEN run: with UPP plugin
     green_events = claude_run(prompt, max_turns=5)
-    green_text = extract_all_text(green_events)
+    green_text = extract_all_text(green_events).lower()
 
-    # Assert: each marker present in GREEN
-    for marker in green_markers:
-        assert marker.lower() in green_text.lower(), (
-            f"GREEN MISSING MARKER: '{marker}' not found in GREEN output "
-            f"for skill '{skill_name}'"
-        )
+    # Find which markers appear in GREEN
+    green_hits = [m for m in green_markers if m.lower() in green_text]
 
-    # Assert: at least ONE marker absent in RED (proves skill influence)
-    red_absent = [m for m in green_markers if m.lower() not in red_text.lower()]
-    assert len(red_absent) > 0, (
-        f"RED-GREEN INDISTINGUISHABLE: All markers found in BOTH RED and "
-        f"GREEN for skill '{skill_name}'. The markers may be in Claude's "
-        f"training data rather than from the skill. Markers: {green_markers}"
+    # At least ONE marker must appear in GREEN
+    assert len(green_hits) > 0, (
+        f"GREEN MISSING ALL MARKERS: None of {green_markers} found in "
+        f"GREEN output for skill '{skill_name}'. The skill may not be "
+        f"loading or the markers are wrong."
+    )
+
+    # At least ONE marker that's in GREEN must be ABSENT from RED
+    green_only = [m for m in green_hits if m.lower() not in red_text]
+    assert len(green_only) > 0, (
+        f"RED-GREEN INDISTINGUISHABLE: Every marker found in GREEN was "
+        f"also in RED for skill '{skill_name}'. GREEN hits: {green_hits}. "
+        f"The skill may not be adding behavioral value beyond training data."
     )

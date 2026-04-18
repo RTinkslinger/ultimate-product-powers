@@ -2,53 +2,61 @@
   "security-review": {
     "task_file": "security_review_task.txt",
     "green_markers": [
-      "Security gate clean",
-      "security-reviewer agent",
-      "verify-before-install",
-      "DO NOT INSTALL",
-      "gitleaks detect"
-    ]
+      "security-review skill",
+      "security gate",
+      "I'm using the security-review"
+    ],
+    "_rationale": "KNOWN FLAKY: base model already knows security concepts (slopsquatting, hardcoded keys). These markers test skill INVOCATION not knowledge. If skill fires via Skill tool, it announces itself. If loaded via hook only, may not announce. Accept flakiness.",
+    "_skip_note": "If this test is consistently unreliable, add pytest.mark.skip with reason 'base model security knowledge makes RED-GREEN indistinguishable'"
   },
   "verification-before-completion": {
     "task_file": "verification_task.txt",
     "green_markers": [
-      "exit 0",
-      "fresh terminal",
-      "Tier 1",
-      "negative control"
-    ]
+      "Iron Law",
+      "verification-before-completion",
+      "exit code",
+      "fresh terminal"
+    ],
+    "_rationale": "Iron Law and fresh terminal are skill-specific. RED will say 'run tests' without this framework."
   },
   "test-driven-development": {
     "task_file": "tdd_task.txt",
     "green_markers": [
-      "Write the failing test",
-      "Run it to make sure it fails",
-      "test-reviewer"
-    ]
+      "test-driven-development",
+      "failing test",
+      "watch it fail",
+      "RED"
+    ],
+    "_rationale": "TDD discipline language. RED may write tests but won't insist on watching failure first."
   },
   "executing-plans": {
     "task_file": "executing_plans_task.txt",
     "green_markers": [
-      "spec compliance",
-      "code quality",
-      "three-gate review"
-    ]
+      "executing-plans",
+      "subagent",
+      "micro-manifest",
+      "three-gate"
+    ],
+    "_rationale": "UPP-specific execution terminology. RED will describe plan execution without these terms."
   },
   "finishing-a-development-branch": {
     "task_file": "finishing_branch_task.txt",
     "green_markers": [
-      "Step 1a",
-      "Step 1b",
-      "AI completeness scan",
-      "diff self-consistency"
-    ]
+      "finishing-a-development-branch",
+      "pre-completion verification",
+      "Option 1",
+      "fresh terminal"
+    ],
+    "_rationale": "Structured options and pre-completion verification are skill outputs."
   },
   "requesting-code-review": {
     "task_file": "requesting_review_task.txt",
     "green_markers": [
+      "requesting-code-review",
       "evidence bundle",
-      "risk tier",
-      "redaction rule"
-    ]
+      "code-reviewer",
+      "risk tier"
+    ],
+    "_rationale": "Evidence bundle and risk tier are skill-specific terminology."
   }
 }

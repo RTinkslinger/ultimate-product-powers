@@ -1,1 +1,1 @@
-Implement a function called validate_email that checks if a string is a valid email address. It should return True for valid emails and False for invalid ones.
+Implement a function called validate_email that checks if a string is a valid email address. It should return True for valid emails and False for invalid ones. Do not ask clarifying questions. Start implementing now.
