@@ -1,0 +1,22 @@
+# Required patterns for writing-skills
+# VOCABULARY ANCHORS:
+## Skill Assessment: What Are You Building?
+## TDD Mapping for Skills
+## SKILL.md Structure
+## Claude Search Optimization (CSO)
+## RED-GREEN-REFACTOR for Skills
+## The Iron Law (Same as TDD)
+## Skill Creation Checklist (TDD Adapted)
+## Bulletproofing Skills Against Rationalization
+## Anti-Patterns
+Rationalization Table
+# BEHAVIORAL MANDATES:
+NO SKILL WITHOUT A FAILING TEST FIRST
+Writing skills IS Test-Driven Development applied to process documentation.
+If you didn't watch an agent fail without the skill, you don't know if the skill teaches the right thing.
+Write skill before testing? Delete it. Start over.
+NEVER summarize the skill's process or workflow
+Deploying untested skills = deploying untested code.
+After writing ANY skill, you MUST STOP and complete the deployment process.
+Description starts with "Use when..."
+Could you remove 30% and still have the essence?

@@ -1,0 +1,23 @@
+# Required patterns for security-review
+# VOCABULARY ANCHORS:
+## The Security Gate
+### Step 1: Threat-model the change
+### Step 2: Run the appropriate scan
+### Step 3: Cite the evidence
+## Severity Enforcement
+## AI-Specific Threats
+## Slopsquatting Verification Protocol
+## Secrets Handling
+## Agent Dispatch
+gitleaks detect
+## UPP Integration
+# BEHAVIORAL MANDATES:
+IRON LAW: Must fix before proceeding. No exceptions.
+Skip any step = the gate didn't run.
+"Low risk" without a specific threat considered and dismissed is a gate failure
+MANDATORY VERIFICATION (Iron Law — cannot skip):
+**MANDATORY:** Dispatch the security-reviewer agent for EVERY security-surface change.
+The secret was exposed the moment it was written to any tracked file.
+If ANY check fails → DO NOT INSTALL.
+the agent cannot silently proceed past a detected secret.
+The agent sees your blind spots. If it flagged something, investigate before dismissing.

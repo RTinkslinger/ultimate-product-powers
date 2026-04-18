@@ -1,0 +1,22 @@
+# Required patterns for receiving-code-review
+# VOCABULARY ANCHORS:
+## Response Chain
+## Forbidden Responses
+## AI Failure Modes
+## Structured Feedback Handling
+## Source-Specific Handling
+## Conditional Routing
+## Deadlock Resolution
+## Integration Points
+Performative agreement
+Evidence-free pushback
+# BEHAVIORAL MANDATES:
+Code review requires technical evaluation, not emotional performance.
+No performative agreement. No evidence-free pushback. No routing avoidance.
+"You're absolutely right!" / "Great point!" / "Excellent feedback!"
+Pushback requires falsifiable evidence.
+Verify before implementing. Evidence before agreement.
+Just fix it and show in the code. Actions speak.
+Implement exactly what was requested. Bonus work needs its own review cycle.
+READ: Complete all feedback without reacting.
+"The reviewer is senior so they must be right" — authority is not evidence

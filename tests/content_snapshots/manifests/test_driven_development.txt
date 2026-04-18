@@ -1,0 +1,27 @@
+# Required patterns for test-driven-development
+# VOCABULARY ANCHORS:
+## The Iron Law
+## Red-Green-Refactor
+### RED - Write Failing Test
+### Verify RED - Watch It Fail
+### Test-Reviewer Gate (after RED, before GREEN)
+### GREEN - Minimal Code
+### Verify GREEN - Watch It Pass
+### REFACTOR - Clean Up (Don't Skip This)
+## Test Behaviors, Not Implementations
+## Common Rationalizations
+## Red Flags - STOP and Start Over
+## When Stuck
+## Debugging Integration
+## Testing Anti-Patterns
+# BEHAVIORAL MANDATES:
+NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
+Write code before the test? Delete it. Start over.
+Violating the letter of the rules is violating the spirit of the rules.
+If you didn't watch the test fail, you don't know if it tests the right thing.
+Delete means delete
+MANDATORY. Never skip.
+test-reviewer
+Spec Connection (when available)
+DESIGN.md
+No exceptions without your human partner's permission.

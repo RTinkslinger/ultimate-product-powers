@@ -1,0 +1,27 @@
+# Required patterns for product-redesign
+# VOCABULARY ANCHORS:
+## The Flow
+## Phase 1: Diagnosis
+### 1a. Quick Scan
+### 1b. Pain Discovery
+### 1c. Vision
+### Exit Gate
+## Phase 2: Treatment
+### 2a. Full Audit
+### 2b. Prototypes
+### 2c. User Reviews + Picks Direction
+### 2d. DESIGN.md Extraction
+### 2e. Migration Strategy Spec
+## Anti-Slop Aesthetic Guidance
+Token mapping
+Component change surface
+## Spec Output Format
+Page migration surface
+Recommended migration paths
+# BEHAVIORAL MANDATES:
+diagnosis before treatment
+understand what's broken, define where it should go
+Minimum 3 questions via AskUserQuestion
+handoff to writing-plans
+the new design should feel like an EVOLUTION, not an unrelated replacement
+This is not brainstorming a new feature.

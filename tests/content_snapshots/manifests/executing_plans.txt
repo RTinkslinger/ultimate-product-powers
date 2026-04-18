@@ -1,0 +1,33 @@
+# Required patterns for executing-plans
+# VOCABULARY ANCHORS:
+## 2. Workspace Setup
+## 3. Mode Selection
+## 4. Loading the Plan
+## 6. Micro-Manifest Context Packaging
+## 7. Dispatch & Execution Loop
+## 8. Three-Gate Review Pipeline
+## 9. Fix Iterations
+## 10. Handling Implementer Status
+## 11. Model Selection
+## 14. Final Design Verification
+## 15. Final Holistic Code Review
+## Graceful Degradation Summary
+## Prompt Templates
+## 5. When NOT to Delegate
+## 13. Inline Execution
+## 16. Finishing
+## Red Flags
+# BEHAVIORAL MANDATES:
+Do not start implementation on main/master without explicit user consent.
+Skip reviews (spec compliance OR code quality OR design compliance when applicable)
+Maximum 3 fix cycles per gate
+Dispatch multiple implementation subagents in parallel
+do NOT make subagents read the plan file
+Micro-Manifest
+implementer-prompt.md
+spec-reviewer-prompt.md
+design-compliance-reviewer-prompt.md
+DONE_WITH_CONCERNS
+NEEDS_CONTEXT
+Gates are sequential. Spec first, quality second, design third.
+Do NOT proceed to the next gate or the next task until the human responds

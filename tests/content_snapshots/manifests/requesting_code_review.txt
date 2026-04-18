@@ -1,0 +1,20 @@
+# Required patterns for requesting-code-review
+# VOCABULARY ANCHORS:
+## Mandatory Triggers
+## Evidence Bundle
+## Agent Dispatch Protocol
+## Risk-Tiered Bundling
+## Auto-Chain to Receiving
+## Integration Points
+## Red Flags
+evidence bundle
+falsifiable artifact
+# BEHAVIORAL MANDATES:
+Review early, review often.
+Bundle evidence. Dispatch independent reviewer. Fresh context, always.
+NO builder chain-of-thought
+Bundle contains ARTIFACTS ONLY
+"Low risk = skip review" is an anti-pattern.
+Fresh context. No prior conversation. Builder ≠ reviewer.
+About to skip review because "it's simple" or "just a small change"
+Self-reviewing from the same context instead of dispatching a fresh-context agent

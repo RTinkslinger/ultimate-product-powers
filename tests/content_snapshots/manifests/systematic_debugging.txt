@@ -1,0 +1,24 @@
+# Required patterns for systematic-debugging
+# VOCABULARY ANCHORS:
+## The Iron Law
+### Phase 1: Root Cause Investigation
+### Phase 2: Pattern Analysis
+### Phase 3: Hypothesis and Testing
+### Phase 4: Implementation
+## Red Flags - STOP and Follow Process
+## Common Rationalizations
+## Quick Reference
+## Supporting Techniques
+root-cause-tracing.md
+defense-in-depth.md
+### Impact Analysis (after fix verified)
+# BEHAVIORAL MANDATES:
+NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
+ALWAYS find root cause before attempting fixes. Symptom fixes are failure.
+Violating the letter of this process is violating the spirit of debugging.
+If you haven't completed Phase 1, you cannot propose fixes.
+DON'T add more fixes on top
+STOP. Question the architecture
+Dispatch a **hypothesis-generator subagent** for a fresh perspective
+Fix the root cause, not the symptom
+ALL of these mean: STOP. Return to Phase 1.

@@ -1,0 +1,22 @@
+# Required patterns for using-git-worktrees
+# VOCABULARY ANCHORS:
+## Mental Model
+## When to Use a Worktree
+## Primary Path: Claude Code Native
+## Raw Git Path: Commands & Lifecycle
+## Top Pitfalls
+### 1. Same-branch invariant (repeat)
+## Advanced Patterns (reference)
+## Quick Reference
+isolation: worktree
+EnterWorktree / ExitWorktree
+Pre-removal checklist
+# BEHAVIORAL MANDATES:
+Share the repo, isolate the checkout.
+Git refuses to check out the same branch in two worktrees simultaneously.
+Place worktrees sibling to main repo
+Use unique branches per worktree
+Nesting confuses `.gitignore`, editor file watchers, fd/ripgrep.
+Manually `rm -rf` a worktree directory — leaves orphan metadata.
+Run `git status` clean check before `git worktree remove`
+Prefer Claude Code native

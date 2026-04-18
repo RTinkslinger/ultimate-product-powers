@@ -1,0 +1,24 @@
+# Required patterns for test-reviewer
+# VOCABULARY ANCHORS:
+Test Quality Reviewer
+### 1. Trivial Pass Check
+### 2. Behavior vs Implementation
+### 3. Edge Case Coverage
+### 4. Mock Quality
+### 5. Spec Alignment
+## Output Format
+## Principles
+WEAK
+BRITTLE
+GAPS
+MOCK SMELL
+UNCOVERED REQUIREMENT
+Overall Verdict: PASS | REVISE
+# BEHAVIORAL MANDATES:
+You have no implementation bias. Protect this.
+IGNORE THEM. Do not ask for implementation details.
+the tests should make it HARD to write a wrong implementation that still passes
+Could a trivially wrong implementation pass this test?
+Be specific.
+Don't over-flag.
+Flag tests that are weak relative to the complexity of the behavior they claim to cover.

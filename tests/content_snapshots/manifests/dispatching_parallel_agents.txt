@@ -1,0 +1,23 @@
+# Required patterns for dispatching-parallel-agents
+# VOCABULARY ANCHORS:
+## When to Use
+### 1. Identify Independent Domains
+### 2. Create Focused Agent Tasks
+### 3. Dispatch in Parallel
+### 4. Review and Integrate
+## Agent Prompt Structure
+## Common Mistakes
+## Verification
+File ownership
+Shared spec reference
+using-git-worktrees
+## When NOT to Use
+## Real Example from Session
+# BEHAVIORAL MANDATES:
+Dispatch one agent per independent problem domain. Let them work concurrently.
+Explicit list of files this agent MAY edit. No other files.
+Merge sequentially with test verification
+**If one agent fails:** Revert any partial edits from the failed agent.
+Do NOT just increase timeouts - find the real issue.
+If you see build errors or test failures in files you did NOT edit
+Don't use parallel dispatch when

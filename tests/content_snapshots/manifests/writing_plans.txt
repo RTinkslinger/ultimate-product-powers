@@ -1,0 +1,30 @@
+# Required patterns for writing-plans
+# VOCABULARY ANCHORS:
+## 2. Scope Check
+## 3. Design Context Detection
+## 5. Task Ordering
+## 6. Bite-Sized Task Granularity
+## 7. Plan Document Header
+## 8. Task Structure — Standard
+## 9. Task Structure — Design-Aware
+## 10. Golden Samples Tasks
+## 11. Progressive Design Verification
+## 12. No Placeholders
+## 14. Self-Review
+## 15. Execution Handoff
+Graceful Degradation
+## 4. File Structure
+### Design Reference Block
+### Design Checklist
+### Mid-Plan: Design Spot-Check
+### Final: Full Design Verification
+# BEHAVIORAL MANDATES:
+DRY. YAGNI. TDD. Frequent commits.
+"TBD", "TODO", "implement later", "fill in details"
+Exact file paths always
+Complete code in every step
+design-system-enforcer
+Section 10
+DESIGN.md hash
+**Execute with:** the executing-plans skill
+Steps that describe what to do without showing how (code blocks required for code steps)

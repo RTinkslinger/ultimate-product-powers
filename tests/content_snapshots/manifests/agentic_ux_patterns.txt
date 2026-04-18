@@ -1,0 +1,22 @@
+# Required patterns for agentic-ux-patterns
+# VOCABULARY ANCHORS:
+## Streaming Strategies
+## Approval Flow Taxonomy
+## Error Recovery
+## Streaming Accessibility
+## Responsive Agent UI
+## Content Type Hierarchy
+## Thinking & Reasoning Indicators
+Token-by-token
+Chunk streaming
+Skeleton-then-replace
+Event-based semantic
+ARIA live regions
+prefers-reduced-motion
+# BEHAVIORAL MANDATES:
+Preserve partial output.
+Never discard what was already generated.
+Debounce updates to ~500ms.
+Calibrate by blast radius: auto-approve reads, review writes, require confirmation for deletes.
+focus STAYS on the input field
+Never render unclosed HTML tags mid-stream.

@@ -1,0 +1,28 @@
+# Required patterns for finishing-a-development-branch
+# VOCABULARY ANCHORS:
+### Step 1: Pre-Completion Verification
+#### 1a. Tests — in a fresh terminal
+#### 1b. Lint and type checks
+#### 1c. AI completeness scan
+#### 1d. Design compliance (when DESIGN.md exists)
+#### 1e. Diff self-consistency — check for AI workarounds
+### Step 2: Determine Base Branch
+### Step 2.5: PR Size Advisory
+### Step 3: Present Options
+### Step 4: Execute Choice
+### Step 5: Cleanup Worktree
+## Quick Reference
+## Common Mistakes
+## Rationalizations the agent will try
+## Integration
+design-system-enforcer
+dispatching-parallel-agents
+# BEHAVIORAL MANDATES:
+Verify → advise → decide → execute → clean up.
+Paste the exit code before continuing — do not infer from log lines.
+Present exactly 4 options — no more, no fewer
+Must fix before completing. Cannot proceed to options.
+Force-remove a dirty worktree
+Run full pre-completion verification (1a–1e) before offering options
+Accept in-session test results as verification
+verification-before-completion

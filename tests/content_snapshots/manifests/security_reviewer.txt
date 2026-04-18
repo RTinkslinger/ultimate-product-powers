@@ -1,0 +1,24 @@
+# Required patterns for security-reviewer
+# VOCABULARY ANCHORS:
+adversarial security reviewer
+## What You Receive
+## AI-Specific Threat Deep Dives
+### 1. Prompt Injection via Untrusted Input
+### 2. Dependency Hallucination (Slopsquatting)
+### 3. Insecure Output Handling
+### 4. Config-as-Attack-Surface
+### 5. Tool Poisoning
+### 6. Agent Trust Boundaries
+## Independent Scan Protocol
+## Adversarial Checklist
+## Output Format
+AIShellJack
+Toxic Agent Flow
+Log-To-Leak
+# BEHAVIORAL MANDATES:
+**Default stance:** The gate missed something. Prove yourself wrong.
+You are a reviewer, not a fixer. Report findings — do not edit files.
+Do NOT use the gate's reported results — form your own assessment and compare.
+Gate findings confirmed. No additional issues found.
+If ANY red flag → recommend DO NOT INSTALL in your findings.
+If you're uncertain about a finding: classify as MEDIUM

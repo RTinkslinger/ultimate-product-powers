@@ -1,0 +1,26 @@
+# Required patterns for design-system-enforcer
+# VOCABULARY ANCHORS:
+## The Mindset
+## Core Principles
+## The Work
+### Before Writing Code
+### While Building
+### After Building
+### Golden Samples (Agentic Products)
+### Figma Drift Detection (Layer 4)
+## Patterns
+## CSS 2026 Baseline
+## Traps
+hierarchy of trust
+DESIGN.md
+shadcn
+# BEHAVIORAL MANDATES:
+Ground before you build.
+Composition over creation.
+Tokens are contracts.
+Accessibility is structure, not decoration.
+A hardcoded `#7c3aed` is a promise you'll find and update every instance later.
+If it exists in shadcn/ui, use it. Don't rebuild.
+This is not optional when DESIGN.md exists.
+The accessibility tree is the truth.
+Don't generate the "Instead Of" column patterns for new projects.

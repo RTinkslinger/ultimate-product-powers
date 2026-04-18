@@ -1,2 +1,7 @@
 hooks/.cache/
 .DS_Store
+tests/.venv/
+tests/test-results/
+tests/__pycache__/
+tests/**/__pycache__/
+tests/_empty_plugin/

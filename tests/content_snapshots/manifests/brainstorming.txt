@@ -1,0 +1,26 @@
+# Required patterns for brainstorming
+# VOCABULARY ANCHORS:
+## The Discovery Mindset
+## Prototype-First Pipeline (Greenfield Frontend)
+### Mood Exploration (Step 4a)
+### Prototype Generation (Step 4b)
+### User Reviews in Browser (Step 4c)
+### DESIGN.md Extraction (Step 4e)
+### Figma MCP Enrichment (Step 4f)
+### Playwright Baseline Capture (Step 4g)
+## Visual Companion
+## Aesthetic Guidance (Prototype-First)
+AskUserQuestion
+## Key Principles
+Stitch MCP
+v0-generate.mjs
+## After the Design
+Spec Self-Review
+# BEHAVIORAL MANDATES:
+Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it.
+The terminal state is invoking writing-plans.
+One question at a time
+YAGNI ruthlessly
+Every project goes through this process.
+Invoke the writing-plans skill to create a detailed implementation plan
+Do NOT invoke any other skill. writing-plans is the next step.

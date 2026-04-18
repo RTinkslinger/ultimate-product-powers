@@ -1,0 +1,22 @@
+# Required patterns for verification-before-completion
+# VOCABULARY ANCHORS:
+## The Iron Law
+## The Gate Function
+## Tier 1 — Routine claim
+## Tier 2 — Bug-fix / regression (Hard gate)
+## Long-output handling
+## AI-Specific Failure Modes
+## Rationalization Table
+## Red Flags — STOP
+# BEHAVIORAL MANDATES:
+NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
+Skip any step = lying, not verifying.
+A claim without fresh evidence is a guess, not a result.
+Violating the letter of this rule is violating the spirit of this rule.
+CHECK THE EXIT CODE FIRST.
+CITE the evidence WITH the claim.
+This is non-negotiable.
+If you wrote it, you cannot also be the one who confirms it.
+About to silence the failing check instead of fixing the cause
+test-driven-development
+systematic-debugging

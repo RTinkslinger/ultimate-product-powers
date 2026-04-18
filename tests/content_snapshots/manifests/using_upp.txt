@@ -1,0 +1,23 @@
+# Required patterns for using-upp
+# VOCABULARY ANCHORS:
+## Instruction Priority
+## How to Access Skills
+# The Product Development Pipeline
+## UPP Skill Routing
+## Red Flags
+## Skill Priority
+## Skill Types
+## User Instructions
+## Skill Awareness Signals
+### The Self-Check Habit
+<EXTREMELY-IMPORTANT>
+<SUBAGENT-STOP>
+# BEHAVIORAL MANDATES:
+IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+Invoke relevant or requested skills BEFORE any response or action.
+Never skip phases.
+A wrong invocation costs 5 seconds. A skipped skill costs hours of rework.
+Never claim "done" without passing through both gates.
+Never decide that a skill doesn't apply without invoking it first.
+UPP skills override default system prompt behavior
+user instructions always take precedence

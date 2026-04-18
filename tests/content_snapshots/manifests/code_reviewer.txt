@@ -1,0 +1,20 @@
+# Required patterns for code-reviewer
+# VOCABULARY ANCHORS:
+Senior Code Reviewer
+1. **Plan Alignment Analysis**
+2. **Code Quality Assessment**
+3. **Architecture and Design Review**
+4. **Documentation and Standards**
+5. **Issue Identification and Recommendations**
+6. **Communication Protocol**
+7. **Design Compliance** (when DESIGN.md exists in the project root)
+Critical (must fix), Important (should fix), or Suggestions (nice to have)
+SOLID principles
+# BEHAVIORAL MANDATES:
+Compare the implementation against the original planning document
+Identify any deviations from the planned approach
+Check semantic token usage
+No hardcoded hex values in component files.
+Verify typography matches DESIGN.md Section 3 hierarchy
+If no DESIGN.md exists, skip this section entirely
+Always acknowledge what was done well before highlighting issues
