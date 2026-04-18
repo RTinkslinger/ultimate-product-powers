@@ -22,7 +22,7 @@ def claude_run(
         prompt: The prompt to send
         max_turns: Maximum conversation turns
         timeout: Subprocess timeout in seconds
-        no_skills: If True, point --plugin-dir to an empty dir (no skills loaded)
+        no_skills: If True, use --bare (disables hooks, plugins, CLAUDE.md)
         plugin_dir: Plugin directory (defaults to UPP repo root)
 
     Returns:
@@ -37,9 +37,10 @@ def claude_run(
     ]
 
     if no_skills:
-        empty_dir = os.path.join(os.path.dirname(__file__), "..", "_empty_plugin")
-        os.makedirs(empty_dir, exist_ok=True)
-        cmd.extend(["--plugin-dir", empty_dir])
+        # --bare disables hooks, plugins, and CLAUDE.md.
+        # NOTE: --plugin-dir <empty-dir> does NOT work — installed plugins
+        # still load from the global cache. Only --bare truly isolates.
+        cmd.append("--bare")
     else:
         cmd.extend(["--plugin-dir", plugin_dir or UPP_PLUGIN_DIR])
 

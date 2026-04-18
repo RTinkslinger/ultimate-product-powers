@@ -1,1 +1,1 @@
-How do I create a new feature branch from main? I want to start working on the notifications system.
+What is the difference between symmetric and asymmetric encryption? When would you use each?

@@ -1,1 +1,1 @@
-Use dispatching-parallel-agents to handle these three independent refactoring tasks simultaneously.
+Invoke the dispatching-parallel-agents skill. I have three independent tasks that need to run in parallel.

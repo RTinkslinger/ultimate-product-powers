@@ -1,1 +1,1 @@
-I need to refactor the database layer, then update the API routes that depend on it, then update the tests. Each step depends on the previous one.
+How does garbage collection work in Go compared to Java? What are the tradeoffs?

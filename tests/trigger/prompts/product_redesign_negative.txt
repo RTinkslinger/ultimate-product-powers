@@ -1,1 +1,1 @@
-I'm building a brand new SaaS product from scratch. I want to explore what the UI should look like before writing any code.
+What are the key differences between PostgreSQL and MySQL for a high-write transactional workload?

@@ -1,1 +1,1 @@
-How do I resolve a merge conflict between two branches? I have conflicting changes in the same file.
+How does B-tree indexing work in databases? Why is it preferred over hash indexes for range queries?

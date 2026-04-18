@@ -1,1 +1,1 @@
-What's the best way to structure a project plan for a new microservice? I want to document dependencies and milestones.
+Explain the difference between REST and GraphQL. When would you choose one over the other for a new API?

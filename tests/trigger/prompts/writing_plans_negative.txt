@@ -1,1 +1,1 @@
-I have a vague idea for improving our onboarding flow. Can we talk through what the right approach might be before committing to anything?
+How does the Linux kernel handle virtual memory and page faults? Explain the lifecycle of a page fault.

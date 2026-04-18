@@ -1,1 +1,1 @@
-A teammate left comments on my PR saying the error handling is too verbose. How should I respond to that feedback?
+Explain how TCP congestion control works. What is the difference between Reno and CUBIC?

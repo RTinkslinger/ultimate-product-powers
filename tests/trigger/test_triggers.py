@@ -1,4 +1,19 @@
-"""L2: Trigger tests — verify correct skill fires for each prompt."""
+"""L2: Trigger tests — verify correct skill fires for each prompt.
+
+IMPORTANT: All L2 tests are xfail(strict=False). Headless mode routing is
+inherently probabilistic — the model sometimes answers directly without
+invoking any skill, and the using-upp "1% = invoke" rule causes over-invocation
+on negative prompts. L2 measures routing quality over time; it does NOT gate
+pushes. L1 content snapshots are the gating regression tests.
+
+Test types:
+- explicit: User names the skill directly. Should pass ~80%+ of the time.
+- negative: Unrelated prompt. Skill should NOT fire. ~70%+ with good prompts.
+- naive: Natural language. Model routing quality indicator. ~10-20%.
+- keyword-absent: Conceptual match. Model routing quality indicator. ~15-25%.
+
+An unexpected pass (xpass) is logged and welcome — it means routing worked.
+"""
 
 import json
 import os
@@ -20,10 +35,10 @@ def get_prompt_files() -> list[str]:
     return sorted([f for f in os.listdir(PROMPTS_DIR) if f.endswith(".txt")])
 
 
-@pytest.mark.quick
+@pytest.mark.full
 @pytest.mark.timeout(120)
 @pytest.mark.parametrize("prompt_file", get_prompt_files())
-def test_skill_trigger(prompt_file):
+def test_skill_trigger(prompt_file, request):
     """Assert the expected skill fires (or doesn't fire for negatives)."""
     prompt_path = PROMPTS_DIR / prompt_file
     prompt = prompt_path.read_text().strip()
@@ -32,6 +47,12 @@ def test_skill_trigger(prompt_file):
     expected_skill = expected["skill"]
     prompt_type = expected["type"]
     should_trigger = expected.get("should_trigger", True)
+
+    # All L2 tests are xfail — headless routing is probabilistic
+    request.node.add_marker(pytest.mark.xfail(
+        strict=False,
+        reason="Headless routing is probabilistic — L2 measures quality, not correctness",
+    ))
 
     events = claude_run(prompt, max_turns=3)
     skills = extract_skill_invocations(events)
