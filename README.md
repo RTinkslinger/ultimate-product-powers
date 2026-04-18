@@ -449,6 +449,40 @@ Three skills share identical evidence vocabulary to prevent drift:
 
 ---
 
+## Testing
+
+UPP ships with a pytest test suite in `tests/`. It catches content regressions in skills and agents.
+
+### Quick start
+
+```bash
+cd tests
+./run.sh -m quick    # L1 content snapshots + hook smoke tests (<15s)
+./run.sh             # Full suite including L2/L3 (~60 min)
+```
+
+### What's tested
+
+| Layer | Tests | What it catches | Reliable? |
+|-------|-------|----------------|-----------|
+| **L1** Content snapshots | 20 | Missing vocabulary or mandates in SKILL.md / agent files | Yes — deterministic, <1s |
+| **L2** Trigger tests | 68 | Routing regressions (skill fires on wrong prompt) | Informational — headless routing is probabilistic |
+| **L3** Behavior RED-GREEN | 6 | Skill doesn't change model behavior vs baseline | Informational — model may not invoke skill in headless mode |
+| **Hooks** | 4 | Hook scripts crash or produce invalid output | Yes — deterministic, 21s |
+
+**L1 + hooks are the gating tests** (run by the pre-push hook). L2 and L3 are informational quality indicators — they run but failures are expected (`xfail`).
+
+### Adding tests for a new skill
+
+1. Write a manifest in `tests/content_snapshots/manifests/<skill_name>.txt` — list key terms and mandates that must be present
+2. Write 4 trigger prompts in `tests/trigger/prompts/` (explicit, naive, keyword-absent, negative)
+3. Add entries to `tests/trigger/expected.json`
+4. Run: `./run.sh -k <skill_name>`
+
+See `tests/README.md` for full details.
+
+---
+
 ## File Structure
 
 ```
@@ -505,6 +539,17 @@ agents/
 scripts/
   v0-generate.mjs                        # v0 prototype generation wrapper
   package.json
+tests/
+  content_snapshots/                     # L1: grep-based content regression tests
+    manifests/                           # Per-skill/agent required patterns
+  trigger/                               # L2: headless routing tests (xfail)
+    prompts/                             # 68 prompt files (17 skills × 4 types)
+    expected.json                        # Prompt → skill mapping
+  behavior/                              # L3: RED-GREEN behavioral tests (xfail)
+    tasks/                               # Task prompts for 6 core skills
+    markers.json                         # Per-skill vocabulary markers
+  hooks/                                 # Hook smoke tests
+  utils/                                 # Shared test utilities
 ```
 
 ---
