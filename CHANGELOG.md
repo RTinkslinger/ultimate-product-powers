@@ -1,9 +1,10 @@
 # Changelog
 
 ## [2.0.0] — 2026-04-17
-Added: security-review skill, security-reviewer agent
+Added: security-review skill, security-reviewer agent, test infrastructure
 - security-review: 3-step security gate (threat-model, scan, cite evidence), per-language SAST command table (5 ecosystems), Iron Law severity enforcement (critical/high = hard block), 6 AI-specific threat categories (prompt injection, slopsquatting, insecure output handling, config-as-attack-surface, tool poisoning, agent trust boundaries), 10x hardened slopsquatting verification protocol, secrets detection with rotation guidance, always-dispatch security-reviewer agent
 - security-reviewer: adversarial reviewer in independent context, 6 AI-threat deep dives with grep detection patterns, independent SAST scan protocol, 5-dimension adversarial checklist, structured output format
+- Test infrastructure: pytest harness with 98 tests across 4 layers — L1 content snapshots (20 tests, gating), L2 trigger tests (68 tests, xfail informational), L3 behavior RED-GREEN (6 tests, xfail informational), hook smoke tests (4 tests, gating). Pre-push hook gates on L1 + hooks (24 tests, <15s)
 - Plugin: 17 skills, 3 agents, 3 hooks
 
 ## [1.9.0] — 2026-04-17
