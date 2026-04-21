@@ -2,7 +2,7 @@
 
 **Design-aware product development skills for Claude Code.**
 
-UPP is a Claude Code plugin that covers the full product development lifecycle — from brainstorming ideas into working designs, through implementation planning, to multi-agent execution with design-compliant code review. It ships 17 skills, 3 agents, and 3 hooks that work together as a coordinated pipeline.
+UPP is a Claude Code plugin that covers the full product development lifecycle — from brainstorming ideas into working designs, through implementation planning, to multi-agent execution with design-compliant code review. It ships 18 skills, 4 agents, and 3 hooks that work together as a coordinated pipeline.
 
 What makes UPP different from general-purpose coding skills: **design is a first-class concern throughout.** When you build frontends, UPP's brainstorming generates working prototypes and extracts a DESIGN.md that flows through every subsequent skill. Plans order tasks by design dependency. Subagents receive design tokens in their context. Code review checks component compliance against the spec. When you build backends or non-UI projects, the design layer silently deactivates and the engineering discipline skills take over.
 
@@ -16,7 +16,7 @@ What makes UPP different from general-purpose coding skills: **design is a first
 /plugin marketplace add RTinkslinger/ultimate-product-powers
 ```
 
-That's it. All 17 skills, 3 agents, and 3 hooks are immediately available.
+That's it. All 18 skills, 4 agents, and 3 hooks are immediately available.
 
 ### Update
 
@@ -96,6 +96,7 @@ Not everything is part of the linear pipeline. These skills fire on their own tr
 
 - `systematic-debugging` — fires when you encounter a bug, test failure, or unexpected behavior
 - `security-review` — fires when touching auth, crypto, API, config, infrastructure, or dependency files; when security concerns are mentioned
+- `rca` — fires when you type `/rca <target>` to run disciplined root-cause analysis on any bug, failing test, file, commit, or prior diagnosis
 - `using-git-worktrees` — fires when you need parallel branch checkouts or filesystem isolation
 - `dispatching-parallel-agents` — fires when you have 2+ independent tasks that can run concurrently
 - `product-redesign` — fires when overhauling an existing frontend's design system
@@ -267,6 +268,29 @@ Root-cause investigation before fixes. Four phases: Root Cause → Pattern Analy
 
 **Integrates with:** `verification-before-completion` (security claims → Tier 2), `finishing-a-development-branch` (Step 1f), `systematic-debugging` (root-cause before security fix), `test-driven-development` (security regression tests).
 
+#### rca
+**Lines:** 227 | **Trigger:** User invokes `/rca <target>` — any bug, failing test, file, error message, commit SHA, log excerpt, or prior diagnosis
+
+Advisory-only disciplined root-cause analysis. Produces a grounded hypothesis record with citation-only evidence, a read-only investigation loop, and a 3-judge fresh-context audit with conditional tiebreaker. Never mutates repo state, never applies a fix — the user acts on the diagnosis.
+
+**The 8-stage flow:**
+1. **Intake** — type-detect target (path/test/commit/log/description); on ambiguity, survey repo + surface 2-5 candidates, do NOT assume.
+2. **Query neutralization** (G2) — strip user framing from target; preserve semantic intent.
+3. **First-pass ACH** — ≥3 hypotheses with contrastive-CoT, evidence table (direct citations only — exact quote + source line), inconsistency matrix, per-hypothesis confidence (low/medium/high), falsification criterion.
+4. **Investigation loop** (conditional) — read-only + safe-side-effect tools only (Read, Grep, Glob, pure Bash queries, existing test runs). Hard cap: 10 rounds. Abstain honestly if evidence cannot be grounded.
+5. **Judge dispatch (parallel)** — 3 Agent-tool calls in one message to `rca-judge` agent: skeptic (challenge claims, force counter-hypotheses), evidence-auditor (verify citation resolution + semantic support), safety-evaluator (worst-case-if-actioned + causal chain + spurious-pass check).
+6. **Disagreement check** — fires if verdicts split, any judge flags `critical`, or first-pass disagrees with majority-of-3.
+7. **Tiebreaker** (conditional) — 4th rca-judge invocation with combined rubric; verdict is canonical when fired.
+8. **Write outputs** — canonical record at `.rca/<ts>-<slug>.md` (K7-aligned schema) + telemetry JSONL + MEMORY.md pointer + inline summary.
+
+**Quality bar (non-negotiable):**
+- No hypothesis without a direct-citation evidence row.
+- No evidence without a resolvable source quote (string-matchable).
+- No verdict the judges haven't reviewed (unless investigation abstained).
+- Never modify repo state.
+
+**Research basis:** 10-track parallel study + adversarial-validated synthesis. Leans on G2 query neutralization (63%→39% sycophancy), F9 curated input package, F15 RULERS rubric (Spearman >0.80 with expert scores), F6 CLEV cascade.
+
 #### finishing-a-development-branch
 **Lines:** 394 | **Trigger:** Implementation complete, before merging, creating a PR, or removing a worktree
 
@@ -316,7 +340,7 @@ Decision flowchart gates on task independence before dispatching. Provides struc
 #### using-upp
 **Lines:** 230 | **Trigger:** Auto-injected at session start via SessionStart hook
 
-Skill discovery and routing guide. Contains the full pipeline state machine diagram, routing table for all 17 skills, red flags table, and the 1% rule: if there's even a 1% chance a skill applies, invoke it.
+Skill discovery and routing guide. Contains the full pipeline state machine diagram, routing table for all 18 skills, red flags table, and the 1% rule: if there's even a 1% chance a skill applies, invoke it.
 
 #### writing-skills
 **Lines:** 737 | **Trigger:** Creating new skills, editing existing skills, or verifying skills work
@@ -327,7 +351,7 @@ Meta-skill for authoring other skills. TDD applied to skill development: pressur
 
 ## Agents
 
-UPP ships three dedicated reviewer agents. All operate in fresh context with no prior conversation — they evaluate artifacts only.
+UPP ships four dedicated agents. All operate in fresh context with no prior conversation — they evaluate artifacts only.
 
 ### code-reviewer
 **Lines:** 56 | **Dispatched by:** `requesting-code-review`, `executing-plans` three-gate pipeline
@@ -370,6 +394,23 @@ Adversarial security reviewer that challenges the main context's gate findings. 
 **5-dimension adversarial checklist:** threat model quality, tool coverage, false negatives, severity classification, slopsquatting verification.
 
 **Tools:** Read, Grep, Bash, Glob (no Write/Edit — pure reviewer).
+
+### rca-judge
+**Lines:** 78 | **Dispatched by:** `rca` skill (3× in parallel, plus conditional tiebreaker)
+
+Fresh-context judge for `/rca` flow. Single agent definition, role parameterized via invocation prompt (`ROLE: skeptic | evidence-auditor | safety-evaluator | tiebreaker`). Each role has a distinct stance, process, and output schema.
+
+**Roles:**
+- **Skeptic** — assumes first-pass is wrong until proven right. Attacks weakest evidence, forces counter-hypothesis generation, questions target framing.
+- **Evidence-auditor** — mechanical citation verification: does the exact quote resolve at the cited source? Does the quote semantically support the claim it's cited for? Catches cherry-picking and fabrication.
+- **Safety-evaluator** — worst-case-if-actioned analysis. Inspects causal chain for tightness. Runs spurious-pass check (A9): proposes fix variations and asks whether existing tests would catch them.
+- **Tiebreaker** — integrator. Sees first-pass + all 3 primary judge outputs. Arbitrates on disagreement with explicit reasoning. Verdict is canonical when fired.
+
+**Input package (F9 curated):** target (verbatim + neutralized) + first-pass canonical record + cited artifacts (file excerpts, log excerpts, test output — only the quoted portions) + investigation log summary. Does NOT receive full session history, main agent's reasoning, or project CLAUDE.md.
+
+**Output (per role):** fresh independent verdict → delta-score on first-pass → RULERS rubric (6 dimensions, 1-5 scale) → flags (critical/warning/none) → final verdict (accept/accept-with-caveats/reject).
+
+**Tools:** Read, Grep, Glob, pure Bash queries (no Write/Edit/destructive Bash).
 
 ---
 
@@ -532,10 +573,21 @@ skills/
     graphviz-conventions.dot
     render-graphs.js
   dispatching-parallel-agents/SKILL.md   # Parallel subagent dispatch
+  rca/                                   # Disciplined root-cause analysis
+    SKILL.md                             # /rca command orchestration
+    discipline-prompt.md                 # First-pass ACH prompt
+    investigation-prompt.md              # Read-only investigation loop
+    record-schema.md                     # Canonical hypothesis record schema
+    judge-roles/
+      skeptic.md                         # Judge role: challenge claims
+      evidence-auditor.md                # Judge role: citation verification
+      safety-evaluator.md                # Judge role: worst-case + spurious-pass
+      tiebreaker.md                      # Judge role: arbitration on disagreement
 agents/
   code-reviewer.md                       # Design-aware code reviewer
   test-reviewer.md                       # TDD RED phase test reviewer
   security-reviewer.md                   # Adversarial security reviewer
+  rca-judge.md                           # Fresh-context judge for /rca (4 roles)
 scripts/
   v0-generate.mjs                        # v0 prototype generation wrapper
   package.json
@@ -543,7 +595,7 @@ tests/
   content_snapshots/                     # L1: grep-based content regression tests
     manifests/                           # Per-skill/agent required patterns
   trigger/                               # L2: headless routing tests (xfail)
-    prompts/                             # 68 prompt files (17 skills × 4 types)
+    prompts/                             # prompt files (4 types per skill)
     expected.json                        # Prompt → skill mapping
   behavior/                              # L3: RED-GREEN behavioral tests (xfail)
     tasks/                               # Task prompts for 6 core skills
@@ -584,7 +636,7 @@ claude mcp add --scope user --transport http stitch https://stitch.googleapis.co
 
 See [CHANGELOG.md](CHANGELOG.md) for the full release history.
 
-Current version: **2.0.0** (17 skills, 3 agents, 3 hooks).
+Current version: **2.1.0** (18 skills, 4 agents, 3 hooks).
 
 ---
 
