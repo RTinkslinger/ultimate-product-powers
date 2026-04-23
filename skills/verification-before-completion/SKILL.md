@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: Use when about to claim work is complete, fixed, passing, or ready — before committing, opening PRs, marking tasks done, or moving on. Triggers on synonyms too: looks good, all set, should work, ready for review, I think we're done.
+description: "Use when about to claim work is complete, fixed, passing, or ready — before committing, opening PRs, marking tasks done, or moving on. Triggers on synonyms too: looks good, all set, should work, ready for review, I think we're done."
 ---
 
 # Verification Before Completion
