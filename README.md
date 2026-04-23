@@ -2,7 +2,7 @@
 
 **Design-aware product development skills for Claude Code.**
 
-UPP is a Claude Code plugin that covers the full product development lifecycle — from brainstorming ideas into working designs, through implementation planning, to multi-agent execution with design-compliant code review. It ships 18 skills, 4 agents, and 3 hooks that work together as a coordinated pipeline.
+UPP is a Claude Code plugin that covers the full product development lifecycle — from brainstorming ideas into working designs, through implementation planning, to multi-agent execution with design-compliant code review. It ships 18 skills, 5 agents, and 3 hooks that work together as a coordinated pipeline.
 
 What makes UPP different from general-purpose coding skills: **design is a first-class concern throughout.** When you build frontends, UPP's brainstorming generates working prototypes and extracts a DESIGN.md that flows through every subsequent skill. Plans order tasks by design dependency. Subagents receive design tokens in their context. Code review checks component compliance against the spec. When you build backends or non-UI projects, the design layer silently deactivates and the engineering discipline skills take over.
 
@@ -16,7 +16,7 @@ What makes UPP different from general-purpose coding skills: **design is a first
 /plugin marketplace add RTinkslinger/ultimate-product-powers
 ```
 
-That's it. All 18 skills, 4 agents, and 3 hooks are immediately available.
+That's it. All 18 skills, 5 agents, and 3 hooks are immediately available.
 
 ### Update
 
@@ -168,7 +168,7 @@ The outbound side of code review. Bundles verifiable evidence, classifies risk, 
 - Design compliance status (if DESIGN.md exists)
 - **Redaction rule:** NO builder chain-of-thought, scratchpad, or conversation history. The reviewer sees artifacts only.
 
-**Agent dispatch:** Dispatches `code-reviewer` agent (always) in fresh context. Adds `test-reviewer` agent when TDD context applies. Requests design-compliance review when DESIGN.md exists and the diff touches UI components. Builder and reviewer are always different contexts.
+**Agent dispatch:** Dispatches `code-reviewer` agent (always) in fresh context. Adds `test-reviewer` (or `test-reviewer-fast` for ≤3 test suites) when TDD context applies. Requests design-compliance review when DESIGN.md exists and the diff touches UI components. Builder and reviewer are always different contexts.
 
 **Risk-tiered bundling:**
 | Risk | Criteria | Bundle depth |
@@ -220,7 +220,7 @@ The inbound side of code review. Processes feedback with technical rigor — no 
 Enforces RED-GREEN-REFACTOR with an Iron Law: no production code without a failing test first. If code exists before its test, delete it and start over.
 
 **Key features:**
-- RED phase gate: `test-reviewer` agent reviews the test suite before implementation begins (for task-level suites with >3 tests)
+- RED phase gate (non-skippable): `test-reviewer` reviews task-level suites (>3 tests, runs all 9 checks); `test-reviewer-fast` reviews small suites (≤3 tests, runs Checks 6/7/8). Size ≠ safety — MSR '26 data shows small suites are more often hollow, not less.
 - Ecosystem-specific testing patterns per language
 - Testing anti-patterns reference (in supporting file)
 - Integration with `verification-before-completion` for evidence-based "tests pass" claims
@@ -366,15 +366,27 @@ Senior code reviewer with design compliance awareness. Reviews:
 Issues categorized as Critical (must fix), Important (should fix), or Suggestions (nice to have).
 
 ### test-reviewer
-**Lines:** 119 | **Dispatched by:** `test-driven-development` RED phase gate
+**Lines:** 202 | **Dispatched by:** `test-driven-development` RED phase gate for suites >3 tests
 
-Reviews test suites BEFORE implementation begins. Has not seen implementation code — this is intentional. Fresh perspective catches weaknesses that the author's implementation bias would miss.
+Reviews test suites BEFORE implementation begins. Has not seen implementation code — this is intentional. Fresh perspective catches weaknesses that the author's implementation bias would miss. Severity-tiered output (CRITICAL / MAJOR / ADVISORY) with REVISE-as-full-stop language.
 
-**Checks per test:**
-- Trivial Pass Check: could a hardcoded return value pass this test?
-- Behavior vs Implementation: is it testing what the code does or how?
-- Edge case coverage
-- Test isolation (no shared mutable state)
+**9 checks:**
+1. **Trivial Pass** — could a hardcoded return value pass? Flag WEAK.
+2. **Behavior vs Implementation** — asserts observable state vs internal? Flag BRITTLE.
+3. **Edge Case + Error-Path Parity** — for each throws/catch/error-branch, is there a test exercising it? Flag GAPS / ERROR-PARITY GAP.
+4. **Mock Quality** — self-fulfilling mock detection (double-flagged with Check 8), per-test path heuristic for MOCK-IN-E2E. Flag MOCK SMELL with subtype.
+5. **Spec Alignment** — every requirement tested? Flag UNCOVERED REQUIREMENT.
+6. **Production Call-Site Verification** — public methods reached through production entry point (HTTP/MCP/CLI), not direct import? Flag UNWIRED.
+7. **Description-Behavior Correspondence** — every claim in description has a behavior-asserting test? Flag UNVERIFIED CLAIM.
+8. **Oracle Strength** — shape-only / self-fulfilling / tautological / assertion-free / trivially-passable. Flag WEAK ORACLE with subtype.
+9. **Lifecycle / Workflow Coverage** — always runs; emits `N/A — stateless feature` when not applicable. Flag LIFECYCLE GAP.
+
+**Graceful degradation:** when dispatcher can't provide SUT source or entry-point hint, emits `INSUFFICIENT CONTEXT` banner and runs the checks that don't need missing input.
+
+### test-reviewer-fast
+**Lines:** 95 | **Dispatched by:** `test-driven-development` RED phase gate for suites ≤3 tests
+
+Fast-mode sibling to `test-reviewer`. Runs only Checks 6 (Production Call-Site), 7 (Description-Behavior), and 8 (Oracle Strength) — the three checks where a single test can still be catastrophically wrong (unwired, unverified, or asserting nothing useful). Same output format and REVISE hard-stop as full reviewer, with `Mode: fast` header. Size ≠ safety — MSR '26 data shows small suites are more often hollow, not less.
 
 ### security-reviewer
 **Lines:** 208 | **Dispatched by:** `security-review` skill (always, on every security-surface change)
@@ -480,7 +492,7 @@ When `receiving-code-review` evaluates feedback, it may route to other skills:
 `security-review` fires on security-surface file changes and security keywords. It runs a 3-step gate (threat-model → scan → cite evidence), then always dispatches the `security-reviewer` agent for independent adversarial review. The agent challenges the gate's findings — if it finds additional critical/high issues, the Iron Law blocks progress. Also integrates as Step 1f in `finishing-a-development-branch` for pre-merge security verification.
 
 ### The TDD + test-reviewer gate
-`test-driven-development` enforces writing tests first. For task-level suites (>3 tests), the `test-reviewer` agent reviews the test suite before implementation begins — fresh context, no implementation bias.
+`test-driven-development` enforces writing tests first. The reviewer gate is non-skippable — every suite of any size goes through review. Suites >3 tests dispatch `test-reviewer` (9 checks, severity-tiered CRITICAL/MAJOR/ADVISORY output, REVISE = full stop). Suites ≤3 tests dispatch `test-reviewer-fast` (3 highest-ROI checks). UPP takes an explicit Chicago-school stance — tests exercise real code through real boundaries; mocks only for truly external/slow I/O.
 
 ### Evidence vocabulary (shared across skills)
 Three skills share identical evidence vocabulary to prevent drift:
@@ -585,7 +597,8 @@ skills/
       tiebreaker.md                      # Judge role: arbitration on disagreement
 agents/
   code-reviewer.md                       # Design-aware code reviewer
-  test-reviewer.md                       # TDD RED phase test reviewer
+  test-reviewer.md                       # TDD RED phase test reviewer (full, 9 checks, >3 tests)
+  test-reviewer-fast.md                  # TDD RED phase test reviewer (fast, 3 checks, ≤3 tests)
   security-reviewer.md                   # Adversarial security reviewer
   rca-judge.md                           # Fresh-context judge for /rca (4 roles)
 scripts/
@@ -636,7 +649,7 @@ claude mcp add --scope user --transport http stitch https://stitch.googleapis.co
 
 See [CHANGELOG.md](CHANGELOG.md) for the full release history.
 
-Current version: **2.1.0** (18 skills, 4 agents, 3 hooks).
+Current version: **2.2.0** (18 skills, 5 agents, 3 hooks).
 
 ---
 
