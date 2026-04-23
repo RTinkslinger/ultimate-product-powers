@@ -1,5 +1,52 @@
 # Changelog
 
+## [2.2.0] — 2026-04-24
+
+Test-discipline hardening. Expands `test-reviewer` agent from 5 to 9 checks, introduces new `test-reviewer-fast` sibling for ≤3 test suites, and upgrades the TDD skill with explicit Chicago-school stance + production-boundary testing guidance + soft-medium gates.
+
+### Added
+
+- `agents/test-reviewer-fast.md` — 3-check fast-mode variant (Production Call-Site, Description-Behavior, Oracle Strength) for ≤3 test suites. Dispatched automatically by the TDD skill based on suite size.
+- TDD skill: **Chicago-School TDD** section making the stance explicit. UPP tests real code through real boundaries; mocks only for truly external/slow I/O. Wrapped in `<HARD-GATE>` (G3).
+- TDD skill: **Testing Through the Production Boundary** section with HTTP/MCP-stdio/MCP-SSE/CLI/framework-hook table and the test-through-the-public-API rule. Wrapped in `<HARD-GATE>` (G3).
+- TDD skill: **Going Further: Mutation Testing** recommended (not mandatory) section pointing to Stryker / PIT / mutmut / cargo-mutants / Infection.
+- `testing-anti-patterns.md` rewritten as 9-pathology catalog with industry terms, detection signals, bad/good examples, reviewer-flag mapping, and literature citations. Includes Quick Reference flag→pathology→remediation table.
+
+### Changed
+
+- `agents/test-reviewer.md` — expanded from 5 checks to 9. New: **Production Call-Site Verification** (UNWIRED), **Description-Behavior Correspondence** (UNVERIFIED CLAIM), **Oracle Strength** (WEAK ORACLE + 5 subtypes), **Lifecycle/Workflow Coverage** (always runs, emits `N/A — stateless feature` when not applicable). Refined: Check 3 splits Error-Path Parity explicitly; Check 4 adds self-fulfilling-mock detection and per-test path heuristic.
+- Output format is now **severity-tiered**: CRITICAL (blocks GREEN), MAJOR (review inline), ADVISORY (non-gating).
+- **Graceful degradation**: reviewer emits `INSUFFICIENT CONTEXT` when dispatcher can't provide SUT source or entry-point hint, runs the checks that don't need the missing input.
+- **Self-fulfilling mocks fire in BOTH** Check 4 (`MOCK SMELL: self-fulfilling`) AND Check 8 (`WEAK ORACLE: self-fulfilling`) — intentional double-flagging so the pattern is caught regardless of mental model.
+- TDD skill: `When to skip: Only for ≤3 test cases` → **non-skippable gate** with mode dispatch. ≤3 tests → fast reviewer; >3 tests → full reviewer. No bypass path.
+- TDD skill: **REVISE verdict is a full stop** (G5 gate). No GREEN with open CRITICAL findings.
+- TDD skill: **Verification Checklist** requires the reviewer's summary block pasted as a literal artifact (G4 trap).
+- TDD skill: three sections wrapped in `<HARD-GATE>` markdown (G3): Test-Reviewer Gate, Chicago-School TDD, Testing Through the Production Boundary.
+- TDD skill: `Why Order Matters` section shrunk from ~50 lines to ~5 (content preserved in Common Rationalizations table; reclaims room for Chicago + Production Boundary sections).
+- TDD skill: Red-Green-Refactor flow diagram updated to dispatch by suite size with REVISE hard-stop edges.
+- TDD skill: Common Rationalizations table adds refutation for "this suite is small, skip the reviewer."
+
+### Rationale
+
+Driven by Safari Pilot codebase audit (58 findings across 7 recurring patterns) plus research synthesis across 4 parallel ultra-mode tracks (~3000 lines) documenting 9 LLM-test pathologies with industry-standard terminology. Full decision log in the dev repo at:
+- `docs/upp/specs/2026-04-24-test-discipline-hardening-v2.md`
+- `docs/superpowers/brainstorms/2026-04-24-test-discipline-hardening-synthesis.md`
+- `research/23-test-discipline-synthesis.md`
+
+### Validation
+
+8-fixture Safari-Pilot-derived test battery in dev repo at `tests/fixtures/test-discipline-v2/`. Each fixture is a `{test.ts, sut.ts, spec.md, expected-review.md}` triple demonstrating one pattern. Phase 7 spot-checks confirmed v2 agent correctly flags UNWIRED, UNVERIFIED CLAIM, WEAK ORACLE (all subtypes), and the self-fulfilling-mock double-flag across Checks 4 and 8.
+
+### Not in this release (deferred to v2.3)
+
+- Workflow-state hooks (Stop hook blocking session end if reviewer not invoked; PreToolUse hook on test runners). Deferred pending post-v2 telemetry on LLM bypass behavior.
+
+### Not shipping (rejected in brainstorming)
+
+- Commit-time mock-ban hook (content-judgment static detector). No foolproof path-based / import-based / annotation-based approach exists; all have structural false-positive/negative problems. Semantic judgment at review time (Check 4 path heuristic + Chicago stance + Production Boundary section) replaces static detection.
+
+---
+
 ## [2.1.0] — 2026-04-21
 Added: rca skill + rca-judge agent (user-invoked disciplined RCA)
 - rca: advisory-only `/rca <target>` command. Produces grounded root-cause analysis on any target (bug, failing test, file, error, commit, prior diagnosis). Full flow: intake + ambiguity survey → query neutralization → first-pass ACH (≥3 hypotheses, citation-only evidence, inconsistency matrix, falsification criterion) → read-only investigation loop (10-round cap, abstain on non-convergence) → 3 parallel fresh-context judges (skeptic, evidence-auditor, safety-evaluator) with CLEV tiebreaker on disagreement or critical flag → canonical hypothesis record at `.rca/<ts>-<slug>.md` + telemetry JSONL + MEMORY.md pointer. Never mutates repo state.

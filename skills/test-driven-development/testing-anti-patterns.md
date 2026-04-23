@@ -1,299 +1,329 @@
-# Testing Anti-Patterns
+# Testing Anti-Patterns — 9-Pathology Catalog
 
-**Load this reference when:** writing or changing tests, adding mocks, or tempted to add test-only methods to production code.
+**Load this reference when:** writing or changing tests, adding mocks, authoring integration/e2e tests, or invoking the test-reviewer agent.
 
-## Overview
+This file is the source of truth for the vocabulary the test-reviewer agent uses when flagging findings. Each entry maps a named LLM-test pathology to industry terms, detection signals, bad/good examples, and literature.
 
-Tests must verify real behavior, not mock behavior. Mocks are a means to isolate, not the thing being tested.
+When the agent emits `WEAK ORACLE: self-fulfilling` or `MOCK SMELL: self-fulfilling`, the pathology has a name, a literature trail, and a known remediation — all here.
 
-**Core principle:** Test what the code does, not what the mocks do.
+Ordered by severity and frequency per MSR '26 and MUTGEN data.
 
-**Following strict TDD prevents these anti-patterns.**
+---
 
-## The Iron Laws
+## Pathology 1: Self-fulfilling mocks
 
-```
-1. NEVER test mock behavior
-2. NEVER add test-only methods to production classes
-3. NEVER mock without understanding dependencies
-```
+**Also known as**: tautological mocking, mock circular reasoning, self-validating tests, "testing the stub."
 
-## Anti-Pattern 1: Testing Mock Behavior
+**What it is**: a test configures a mock to return value X and then asserts that the system returns X. The assertion is guaranteed by the mock setup, not by any SUT logic.
 
-**The violation:**
+**Detection signal**: `when(dep.x()).thenReturn(VAL); ...; assertEquals(VAL, sut.method())` where the SUT does nothing but pass `VAL` through. Static scan: any test where the asserted literal matches a literal in the mock configuration with no intermediate transformation.
+
+**Example (bad):**
 ```typescript
-// ❌ BAD: Testing that the mock exists
-test('renders sidebar', () => {
-  render(<Page />);
-  expect(screen.getByTestId('sidebar-mock')).toBeInTheDocument();
+when(api.getUser(1)).thenReturn({ id: 1, name: 'Alice' });
+const result = sut.fetchUserName(1);
+assertEquals('Alice', result);  // proves only that the mock returned 'Alice'
+```
+
+**Example (good):**
+```typescript
+when(api.getUser(1)).thenReturn({ id: 1, first: 'Alice', last: 'Cooper' });
+const result = sut.fetchUserName(1);
+assertEquals('Alice Cooper', result);  // asserts SUT's first+last concatenation logic
+```
+
+**Reviewer check**: Check 4 flags as `MOCK SMELL: self-fulfilling`. Check 8 ALSO flags as `WEAK ORACLE: self-fulfilling` (double-flag per v2 design).
+
+**Remediation**: either add a transformation the SUT performs that makes the assertion non-trivial, or remove the mock and use a real (or lightweight real) dependency.
+
+**Literature**: MockMill study arXiv:2604.19315; Mark Sands "Mocking is Tautological" (2014); Randy Coulman "Tautological Tests" (2016); MSR '26 "Are Coding Agents Generating Over-Mocked Tests?" (andrehora.github.io/pub/2026-msr-agents-over-mocked-tests.pdf).
+
+---
+
+## Pathology 2: Asserting return shape, not behavior
+
+**Also known as**: shape-only oracles, shallow oracles, type-only checks.
+
+**What it is**: test only verifies structural properties of the output (type, presence of keys, length) without asserting on semantic content.
+
+**Detection signal**: `expect(result).toHaveProperty('id')`, `expect(result.length).toBe(3)`, `expect(typeof result).toBe('object')`, `assert isinstance(result, dict)` without corresponding value assertions.
+
+**Example (bad):**
+```typescript
+const result = await safariHover('#button');
+expect(result.hovered).toBe(true);  // return shape, not hover behavior
+```
+
+**Example (good):**
+```typescript
+const result = await safariHover('#button');
+expect(getComputedStyle(element)['background-color']).toBe('rgb(0, 0, 255)'); // verifies :hover CSS
+```
+
+**Reviewer check**: Check 8 flags as `WEAK ORACLE: shape-only`.
+
+**Remediation**: assert on the specific observable effect of the claimed behavior, not just that the function returned a successful shape.
+
+**Literature**: MUTGEN arXiv:2506.02954 (shallow oracles linked to low mutation scores); orbilu/ESE 2026 LLM test-smell study.
+
+---
+
+## Pathology 3: Happy-path-only coverage
+
+**Also known as**: golden-path-only testing, positive-path-only.
+
+**What it is**: tests exclusively exercise the successful scenario, neglecting errors, boundaries, and edge cases.
+
+**Detection signal**: coverage report shows 100% line coverage on success path, 0% on error branches. No test mocks dependencies to throw. No boundary inputs (empty, null, max).
+
+**Example (bad):**
+```typescript
+test('runs a task', async () => {
+  await engine.run(async () => { /* success */ });
+  expect(engine.failureCount()).toBe(0);
+});
+// No test for failure path
+```
+
+**Example (good):**
+```typescript
+test('increments failure count on exception', async () => {
+  await expect(engine.run(async () => { throw new Error('boom'); }))
+    .rejects.toThrow('boom');
+  expect(engine.failureCount()).toBe(1);
 });
 ```
 
-**Why this is wrong:**
-- You're verifying the mock works, not that the component works
-- Test passes when mock is present, fails when it's not
-- Tells you nothing about real behavior
+**Reviewer check**: Check 3 flags as `GAPS` or `ERROR-PARITY GAP`.
 
-**your human partner's correction:** "Are we testing the behavior of a mock?"
+**Remediation**: for each `throws`/`catch`/conditional error branch in the SUT, add a test that exercises it and asserts on the observable effect.
 
-**The fix:**
+**Literature**: MUTGEN; CovQValue arXiv:2604.05159 (exploration-guided generation targets negative paths); systematic review arXiv:2511.21382.
+
+---
+
+## Pathology 4: Assertion-free tests
+
+**Also known as**: empty tests, smoke-only tests.
+
+**What it is**: test function executes code but has zero assertion calls. Passes as long as no uncaught exception is thrown.
+
+**Detection signal**: AST scan for test function bodies lacking any `expect` / `assert` / `verify` / `should` / `toBe` / `toEqual` call.
+
+**Example (bad):**
+```python
+def test_login_works():
+    user = login(username='alice', password='pw')
+    # no assertion — passes if login() returns anything non-throwing
+```
+
+**Example (good):**
+```python
+def test_login_returns_user_on_valid_credentials():
+    user = login(username='alice', password='pw')
+    assert user.username == 'alice'
+    assert user.authenticated is True
+```
+
+**Reviewer check**: Check 8 flags as `WEAK ORACLE: assertion-free`.
+
+**Remediation**: add an assertion on the observable effect of the operation. If truly a smoke test (does-not-crash check), name it `test_smoke_*` and allow-list it deliberately.
+
+**Literature**: orbilu/ESE 2026 "Empty Test" smell prevalence; Siddiq et al. 2024 SF110 benchmark.
+
+---
+
+## Pathology 5: Tautological assertions
+
+**Also known as**: trivial assertions, constant assertions.
+
+**What it is**: assertions that are always true given the test setup — asserting literals equal themselves, or checking properties that cannot meaningfully fail.
+
+**Detection signal**: `expect(1).toBe(1)`, `assert True`, `expect(typeof sut).toBe('object')` (always true for any defined class), assertions comparing a variable to the literal it was just assigned.
+
+**Example (bad):**
 ```typescript
-// ✅ GOOD: Test real component or don't mock it
-test('renders sidebar', () => {
-  render(<Page />);  // Don't mock sidebar
-  expect(screen.getByRole('navigation')).toBeInTheDocument();
-});
-
-// OR if sidebar must be mocked for isolation:
-// Don't assert on the mock - test Page's behavior with sidebar present
+const sut = new Engine();
+expect(sut.isReady).toBeDefined();  // always passes for any Engine instance
 ```
 
-### Gate Function
-
-```
-BEFORE asserting on any mock element:
-  Ask: "Am I testing real component behavior or just mock existence?"
-
-  IF testing mock existence:
-    STOP - Delete the assertion or unmock the component
-
-  Test real behavior instead
-```
-
-## Anti-Pattern 2: Test-Only Methods in Production
-
-**The violation:**
+**Example (good):**
 ```typescript
-// ❌ BAD: destroy() only used in tests
-class Session {
-  async destroy() {  // Looks like production API!
-    await this._workspaceManager?.destroyWorkspace(this.id);
-    // ... cleanup
-  }
-}
-
-// In tests
-afterEach(() => session.destroy());
+const sut = new Engine();
+await sut.initialize();
+expect(sut.isReady).toBe(true);  // verifies initialization actually set the flag
 ```
 
-**Why this is wrong:**
-- Production class polluted with test-only code
-- Dangerous if accidentally called in production
-- Violates YAGNI and separation of concerns
-- Confuses object lifecycle with entity lifecycle
+**Reviewer check**: Check 8 flags as `WEAK ORACLE: tautological`.
 
-**The fix:**
+**Remediation**: assert on a state that actually resulted from SUT work, not a state that was always true.
+
+**Literature**: orbilu/ESE 2026 tautological-assertion prevalence; TsDetect test-smell tooling.
+
+---
+
+## Pathology 6: Tests that pass regardless of implementation
+
+**Also known as**: vacuous tests, implementation-agnostic tests, weak oracles.
+
+**What it is**: test is structured so it would pass for many plausible (including incorrect) implementations of the SUT.
+
+**Detection signal**: mentally (or actually) replace the SUT body with `return null` or `throw new Error()`. If the test still passes or the test doesn't exercise the SUT at all, it's vacuous.
+
+**Example (bad):**
 ```typescript
-// ✅ GOOD: Test utilities handle test cleanup
-// Session has no destroy() - it's stateless in production
-
-// In test-utils/
-export async function cleanupSession(session: Session) {
-  const workspace = session.getWorkspaceInfo();
-  if (workspace) {
-    await workspaceManager.destroyWorkspace(workspace.id);
-  }
-}
-
-// In tests
-afterEach(() => cleanupSession(session));
-```
-
-### Gate Function
-
-```
-BEFORE adding any method to production class:
-  Ask: "Is this only used by tests?"
-
-  IF yes:
-    STOP - Don't add it
-    Put it in test utilities instead
-
-  Ask: "Does this class own this resource's lifecycle?"
-
-  IF no:
-    STOP - Wrong class for this method
-```
-
-## Anti-Pattern 3: Mocking Without Understanding
-
-**The violation:**
-```typescript
-// ❌ BAD: Mock breaks test logic
-test('detects duplicate server', () => {
-  // Mock prevents config write that test depends on!
-  vi.mock('ToolCatalog', () => ({
-    discoverAndCacheTools: vi.fn().mockResolvedValue(undefined)
-  }));
-
-  await addServer(config);
-  await addServer(config);  // Should throw - but won't!
+test('processPayment works', async () => {
+  const result = await processPayment(100);
+  expect(result).toBeDefined();  // passes for ANY non-undefined return
 });
 ```
 
-**Why this is wrong:**
-- Mocked method had side effect test depended on (writing config)
-- Over-mocking to "be safe" breaks actual behavior
-- Test passes for wrong reason or fails mysteriously
-
-**The fix:**
+**Example (good):**
 ```typescript
-// ✅ GOOD: Mock at correct level
-test('detects duplicate server', () => {
-  // Mock the slow part, preserve behavior test needs
-  vi.mock('MCPServerManager'); // Just mock slow server startup
-
-  await addServer(config);  // Config written
-  await addServer(config);  // Duplicate detected ✓
+test('processPayment charges the card and returns txn id', async () => {
+  const result = await processPayment(100);
+  expect(result.status).toBe('success');
+  expect(result.amount).toBe(100);
+  expect(await card.balance()).toBe(originalBalance - 100);
 });
 ```
 
-### Gate Function
+**Reviewer check**: Check 1 flags as `WEAK` + Check 8 flags as `WEAK ORACLE: trivially-passable`.
 
+**Remediation**: strengthen assertions to verify specific semantic outcomes that only a correct implementation produces.
+
+**Literature**: MUTGEN 100%-line / 4%-mutation evidence; Outsight AI case study (Cursor/Copilot coverage-vs-mutation gap).
+
+---
+
+## Pathology 7: Over-mocking
+
+**Also known as**: unnecessary mocking, mocking local classes.
+
+**What it is**: replacing dependencies with mocks where exercising the real dependency (or a lightweight real implementation) would be feasible. Particularly harmful for local, in-repo classes and pure-computation collaborators.
+
+**Detection signal**: test mocks a class defined in the same repo; test has multiple `jest.mock()` or `Mockito.mock()` calls for classes without external I/O; heavy `@patch` decoration.
+
+**Example (bad):**
+```python
+@patch('myapp.utils.format_currency')
+@patch('myapp.tax.calculate_tax')
+@patch('myapp.discount.apply_discount')
+def test_order_total(mock_discount, mock_tax, mock_fmt):
+    # mocks three pure functions that could just run
+    mock_fmt.return_value = '$10.00'
+    ...
 ```
-BEFORE mocking any method:
-  STOP - Don't mock yet
 
-  1. Ask: "What side effects does the real method have?"
-  2. Ask: "Does this test depend on any of those side effects?"
-  3. Ask: "Do I fully understand what this test needs?"
-
-  IF depends on side effects:
-    Mock at lower level (the actual slow/external operation)
-    OR use test doubles that preserve necessary behavior
-    NOT the high-level method the test depends on
-
-  IF unsure what test depends on:
-    Run test with real implementation FIRST
-    Observe what actually needs to happen
-    THEN add minimal mocking at the right level
-
-  Red flags:
-    - "I'll mock this to be safe"
-    - "This might be slow, better mock it"
-    - Mocking without understanding the dependency chain
+**Example (good):**
+```python
+def test_order_total_applies_discount_and_tax():
+    order = Order(items=[...], discount_code='SAVE10')
+    total = compute_total(order)  # runs real format_currency, calculate_tax, apply_discount
+    assert total == '$10.50'
 ```
 
-## Anti-Pattern 4: Incomplete Mocks
+**Reviewer check**: Check 4 flags as `MOCK SMELL: over-mocking`.
 
-**The violation:**
+**Remediation**: exercise real collaborators when they are fast, pure, or lightweight. Reserve mocks for slow I/O, third-party APIs, and non-deterministic sources.
+
+**Literature**: MockMill arXiv:2604.19315; MSR '26 agent over-mocking rate (36% vs 26% human baseline).
+
+---
+
+## Pathology 8: Snapshot tests locking in wrong behavior
+
+**Also known as**: golden-file regressions, snapshot rot, baseline freeze.
+
+**What it is**: snapshot test captures output at time T. If T's output is wrong, the wrong output becomes the approved baseline. Future runs pass as long as they keep reproducing the bug.
+
+**Detection signal**: `toMatchSnapshot()` calls; frequent large snapshot file diffs in git history; snapshots containing error messages, stack traces, or known-bad values.
+
+**Example (bad):**
 ```typescript
-// ❌ BAD: Partial mock - only fields you think you need
-const mockResponse = {
-  status: 'success',
-  data: { userId: '123', name: 'Alice' }
-  // Missing: metadata that downstream code uses
-};
-
-// Later: breaks when code accesses response.metadata.requestId
+test('renders user profile', () => {
+  const { container } = render(<UserProfile user={mockUser} />);
+  expect(container).toMatchSnapshot();  // snapshot captures whatever initially renders, bugs and all
+});
 ```
 
-**Why this is wrong:**
-- **Partial mocks hide structural assumptions** - You only mocked fields you know about
-- **Downstream code may depend on fields you didn't include** - Silent failures
-- **Tests pass but integration fails** - Mock incomplete, real API complete
-- **False confidence** - Test proves nothing about real behavior
-
-**The Iron Rule:** Mock the COMPLETE data structure as it exists in reality, not just fields your immediate test uses.
-
-**The fix:**
+**Example (good):**
 ```typescript
-// ✅ GOOD: Mirror real API completeness
-const mockResponse = {
-  status: 'success',
-  data: { userId: '123', name: 'Alice' },
-  metadata: { requestId: 'req-789', timestamp: 1234567890 }
-  // All fields real API returns
-};
+test('renders user profile with name and verified badge', () => {
+  render(<UserProfile user={mockUser} />);
+  expect(screen.getByRole('heading', { name: 'Alice Cooper' })).toBeInTheDocument();
+  expect(screen.getByLabelText('verified')).toBeInTheDocument();
+});
 ```
 
-### Gate Function
+**Reviewer check**: Check 8 flags snapshot tests with suspicious content as `WEAK ORACLE: snapshot-lock`.
 
-```
-BEFORE creating mock responses:
-  Check: "What fields does the real API response contain?"
+**Remediation**: replace snapshot tests with targeted assertions on specific observable outputs. If snapshots are unavoidable (complex structured output), require human review of every snapshot update — never blanket-approve.
 
-  Actions:
-    1. Examine actual API response from docs/examples
-    2. Include ALL fields system might consume downstream
-    3. Verify mock matches real response schema completely
+**Literature**: Jest documentation warnings; orbilu/ESE 2026 snapshot-lock prevalence.
 
-  Critical:
-    If you're creating a mock, you must understand the ENTIRE structure
-    Partial mocks fail silently when code depends on omitted fields
+---
 
-  If uncertain: Include all documented fields
-```
+## Pathology 9: Copy-pasted near-duplicate tests
 
-## Anti-Pattern 5: Integration Tests as Afterthought
+**Also known as**: duplicated tests, test cloning, redundant tests.
 
-**The violation:**
-```
-✅ Implementation complete
-❌ No tests written
-"Ready for testing"
+**What it is**: multiple tests that are nearly identical, differing only in variable names or literal values. Inflates test count and maintenance burden without adding coverage.
+
+**Detection signal**: high token-level similarity between test functions; adjacent `test()` or `def test_*()` blocks with identical structure and different literals.
+
+**Example (bad):**
+```typescript
+test('adds 1 + 1', () => { expect(add(1, 1)).toBe(2); });
+test('adds 2 + 2', () => { expect(add(2, 2)).toBe(4); });
+test('adds 3 + 3', () => { expect(add(3, 3)).toBe(6); });
 ```
 
-**Why this is wrong:**
-- Testing is part of implementation, not optional follow-up
-- TDD would have caught this
-- Can't claim complete without tests
-
-**The fix:**
-```
-TDD cycle:
-1. Write failing test
-2. Implement to pass
-3. Refactor
-4. THEN claim complete
+**Example (good):**
+```typescript
+test.each([
+  [1, 1, 2],
+  [2, 2, 4],
+  [3, 3, 6],
+])('adds %i + %i = %i', (a, b, expected) => {
+  expect(add(a, b)).toBe(expected);
+});
 ```
 
-## When Mocks Become Too Complex
+**Reviewer check**: this pathology is **ADVISORY-only** in v2 (research classifies as noise-not-bugs). The agent may emit a one-line note in the ADVISORY section: "heads up: `test_foo` and `test_bar` differ only in literal values — consider parameterizing." No PASS/REVISE verdict implication.
 
-**Warning signs:**
-- Mock setup longer than test logic
-- Mocking everything to make test pass
-- Mocks missing methods real components have
-- Test breaks when mock changes
+**Remediation**: consolidate into parameterized / table-driven tests. Not urgent.
 
-**your human partner's question:** "Do we need to be using a mock here?"
+**Literature**: TsDetect; Siddiq et al. 2024; orbilu/ESE 2026.
 
-**Consider:** Integration tests with real components often simpler than complex mocks
+---
 
-## TDD Prevents These Anti-Patterns
+## Meta: When to override
 
-**Why TDD helps:**
-1. **Write test first** → Forces you to think about what you're actually testing
-2. **Watch it fail** → Confirms test tests real behavior, not mocks
-3. **Minimal implementation** → No test-only methods creep in
-4. **Real dependencies** → You see what the test actually needs before mocking
+Every pathology in this catalog has legitimate exceptions. Flags are starting points for a conversation, not automatic rewrites. If you have a specific reason a "pathology" is the right choice (e.g., shape-only assertion is intentional because the SUT is a type guard; snapshot is intentional because the output is genuinely large and stable), annotate the test with `// test-discipline: allow-<pattern> reason:<justification>` and the reviewer will suppress the flag for that specific test.
 
-**If you're testing mock behavior, you violated TDD** - you added mocks without watching test fail against real code first.
+The goal is signal, not ceremony.
 
-## Quick Reference
+---
 
-| Anti-Pattern | Fix |
-|--------------|-----|
-| Assert on mock elements | Test real component or unmock it |
-| Test-only methods in production | Move to test utilities |
-| Mock without understanding | Understand dependencies first, mock minimally |
-| Incomplete mocks | Mirror real API completely |
-| Tests as afterthought | TDD - tests first |
-| Over-complex mocks | Consider integration tests |
+## Quick Reference — Flag → Pathology → Remediation
 
-## Red Flags
+| Reviewer flag | Pathology | Primary fix |
+|---|---|---|
+| `MOCK SMELL: self-fulfilling` + `WEAK ORACLE: self-fulfilling` | Self-fulfilling mock | Remove mock or add transformation |
+| `WEAK ORACLE: shape-only` | Shape-only oracle | Assert on computed value, not shape |
+| `GAPS` / `ERROR-PARITY GAP` | Happy-path-only | Add test per error branch |
+| `WEAK ORACLE: assertion-free` | Assertion-free test | Add explicit assertion |
+| `WEAK ORACLE: tautological` | Tautological assertion | Assert on post-condition state |
+| `WEAK` + `WEAK ORACLE: trivially-passable` | Vacuous test | Assert on semantic outcome |
+| `MOCK SMELL: over-mocking` | Over-mocking | Run real collaborators |
+| `WEAK ORACLE: snapshot-lock` | Snapshot rot | Targeted assertions on specific content |
+| ADVISORY line about duplication | Copy-paste tests | Parameterize (low priority) |
 
-- Assertion checks for `*-mock` test IDs
-- Methods only called in test files
-- Mock setup is >50% of test
-- Test fails when you remove mock
-- Can't explain why mock is needed
-- Mocking "just to be safe"
+---
 
-## The Bottom Line
+## Integration with TDD Skill
 
-**Mocks are tools to isolate, not things to test.**
+The TDD skill (`SKILL.md`) references this catalog by name. When the test-reviewer agent flags an issue using a name from this file, developers can look up the pathology here for full context, examples, and remediation guidance.
 
-If TDD reveals you're testing mock behavior, you've gone wrong.
-
-Fix: Test real behavior or question why you're mocking at all.
+Following strict TDD and Chicago-school practices (see `SKILL.md` sections "Chicago-School TDD" and "Testing Through the Production Boundary") prevents most of these pathologies at authoring time.

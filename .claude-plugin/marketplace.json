@@ -4,15 +4,15 @@
     "name": "Aakash Kumar"
   },
   "metadata": {
-    "description": "Ultimate Product Powers — design-aware product development skills for Claude Code.",
-    "version": "1.9.0",
+    "description": "Ultimate Product Powers \u2014 design-aware product development skills for Claude Code.",
+    "version": "2.2.0",
     "pluginRoot": "./"
   },
   "plugins": [
     {
       "name": "upp",
       "description": "Design-aware product development skills for Claude Code. Prototype-first brainstorming, design-system enforcement, implementation planning, multi-agent execution with three-gate review, TDD, systematic debugging, and code review workflows.",
-      "version": "1.9.0",
+      "version": "2.2.0",
       "source": "./",
       "author": {
         "name": "Aakash Kumar"
